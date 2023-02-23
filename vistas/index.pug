@@ -1,0 +1,14 @@
+html
+    head 
+        link(rel="shortcut icon", href="#")
+        title= titulo
+    body 
+        div.container 
+            input(type="text" placeholder="volts" id="volts")
+            input(type="text" placeholder="amps" id="amps")
+            input(type="text" placeholder="pow" id="pow")
+            button(id="btn_agregar") Agregar Lectura
+            p volts -- amps -- pow
+            each lectura in lecturas
+                p= `${lectura.volts} -- ${lectura.amps} -- ${lectura.pow}`
+    script(src="funciones.js")
