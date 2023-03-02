@@ -29,12 +29,11 @@ app.listen(PORT, () => {
 // Routes
 app.get('/', (req, res) => {
     console.log('Nueva conexión: ', req.ip.substr(7));
-    res.send('HOLA QUE PACHA COÑO');
 });
 
 // Retrieve data from startDate to endDate
 app.get('/getData/:startDate/:endDate', (req, res) => { 
-    var magnitude, startDate, endDate, sql;
+    var startDate, endDate, sql;
     startDate = req.params.startDate;
     endDate = req.params.endDate;
     sql = `SELECT volts, amps, pow, date FROM lecturas WHERE date BETWEEN '${startDate}' AND '${endDate}'`;
@@ -42,9 +41,22 @@ app.get('/getData/:startDate/:endDate', (req, res) => {
         if (error) throw error;
         if (results.length > 0) {
             res.json(results);
+            console.log(results);
         } else {
             res.send('SIN RESULTADOS');
         }
     });
+});
 
-})
+// Insert new data
+app.post('/insertData/:volts/:amps/:pow', (req, res) => {
+    var volts, amps, pow;
+    volts = req.params.volts;
+    amps = req.params.amps;
+    pow = req.params.pow;
+    sql = `INSERT INTO lecturas (volts, amps, pow) VALUES (${volts}, ${amps}, ${pow})`;
+    connection.query(sql, (error, results) => {
+        if (error) throw error;
+        res.send('NUEVO DATO INTRODUCIDO');
+    });
+});
