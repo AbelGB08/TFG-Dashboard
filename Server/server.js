@@ -41,7 +41,6 @@ app.get('/getData/:startDate/:endDate', (req, res) => {
         if (error) throw error;
         if (results.length > 0) {
             res.json(results);
-            console.log(results);
         } else {
             res.send('SIN RESULTADOS');
         }
