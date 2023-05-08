@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INA226</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <form action = "/getData" method = "GET">
+        <p>Start Date <input type = "text" name = "startDate"/></p>
+        <p>End Date <input type = "text" name = "endDate"/></p>
+        <p><input type = "Submit" value = "Submit" /></p>
+    </form>
+    <canvas id="inaChart" width="900" height="400"></canvas>
+    <script>
+        var ctx = document.getElementById("inaChart").getContext("2d");
+        var lineChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: {{ dates | safe }},
+                datasets: [
+                    {
+                        label: "Amps",
+                        data: {{ amps | safe }},
+                        fill: false,
+                        borderColor: "rgb(255,255,0)",
+                        lineTension: 0.5
+                    },
+                    {
+                        label: "Volts",
+                        data: {{ volts | safe }},
+                        fill: false,
+                        borderColor: "rgb(255,0,0)",
+                        lineTension: 0.5
+                    },
+                    {
+                        label: "Pow",
+                        data: {{ pow | safe }},
+                        fill: false,
+                        borderColor: "rgb(0,0,255)",
+                        lineTension: 0.5
+                    }
+                ]
+            },
+            options: {
+                responsive: false
+            }
+        });
+        </script>
+</body>
+</html>
