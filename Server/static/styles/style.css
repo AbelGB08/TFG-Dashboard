@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+    padding: 0;
+  }
+  
+  /* Formulario */
+  
+  .chart-title {
+    text-align:   ;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .form {
+    display: flex;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  
+  .form .sensorName, .form input[type="datetime-local"] {
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 50px;
+    cursor: pointer;
+  }
+  .form input[type="submit"] {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .canvas {
+    width: 100%;
+    height: 300px;
+    margin-bottom: 20px;
+  }
+
+  .statusOK {
+    color: green;
+  }
+
+  .statusERROR {
+    color: red;
+  }
+
+  #temperatura-container {
+    max-width: 200px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  #temperatura, #temperatura2, #temperatura3 {
+    font-size: 36px;
+    color: #4CAF50; /* Verde */
+    margin: 0;
+  }
