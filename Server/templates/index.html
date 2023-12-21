@@ -11,80 +11,79 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
 </head>
 <body>
-    <form class="form" action = "/getData" method = "GET">
-        <select class="sensorName" name="sensorName" required>
-            <option value="INA1">INA1</option>
-            <option value="INA2">INA2</option>
-            <option value="INA3">INA3</option>
-            <option value="INA4">INA4</option>
-        </select>
-        <input type="datetime-local" name="startDate" required>
-        <input type="datetime-local" name="endDate" required>
-        <input type = "submit" value = "Submit" />
-    </form>
-    <h1 class="chart-title"> {{ sensor | safe }}</h1>
-    <canvas class="canvas" id="inaChart" width="800" height="250"></canvas>
-    <h1> Sensor Status </h1>
-    <ul class="statusList"></ul>
-    <script>
-        var ctx = document.getElementById("inaChart").getContext("2d");
-        var lineChart = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: {{ dates | safe }},
-                datasets: [
-                    {
-                        label: "Amps",
-                        data: {{ amps | safe }},
-                        fill: false,
-                        borderColor: "rgb(255,255,0)",
-                        lineTension: 0.5
+    <section class="column">
+        <form class="form" action = "/getData" method = "GET">
+            <select class="sensorName" name="sensorName" required>
+                <option value="INA1">INA1</option>
+                <option value="INA2">INA2</option>
+                <option value="INA3">INA3</option>
+                <option value="INA4">INA4</option>
+            </select>
+            <input type="datetime-local" name="startDate" required>
+            <input type="datetime-local" name="endDate" required>
+            <input type = "submit" value = "Search" />
+        </form>
+    </section>
+        <section class="chart-container">
+            <h1 class="chart-title"> {{ sensor | safe }}</h1>
+            <canvas class="canvas" id="inaChart" width="800" height="320"></canvas>
+            <script>
+                var ctx = document.getElementById("inaChart").getContext("2d");
+                var lineChart = new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: {{ dates | safe }},
+                        datasets: [
+                            {
+                                label: "Amps",
+                                data: {{ amps | safe }},
+                                fill: false,
+                                borderColor: "rgb(255,255,0)",
+                                lineTension: 0.5
+                            },
+                            {
+                                label: "Volts",
+                                data: {{ volts | safe }},
+                                fill: false,
+                                borderColor: "rgb(255,0,0)",
+                                lineTension: 0.5
+                            },
+                            {
+                                label: "Pow",
+                                data: {{ pow | safe }},
+                                fill: false,
+                                borderColor: "rgb(0,0,255)",
+                                lineTension: 0.5
+                            }
+                        ]
                     },
-                    {
-                        label: "Volts",
-                        data: {{ volts | safe }},
-                        fill: false,
-                        borderColor: "rgb(255,0,0)",
-                        lineTension: 0.5
-                    },
-                    {
-                        label: "Pow",
-                        data: {{ pow | safe }},
-                        fill: false,
-                        borderColor: "rgb(0,0,255)",
-                        lineTension: 0.5
+                    options: {
+                        responsive: true
                     }
-                ]
-            },
-            options: {
-                responsive: true
-            }
-        });
-    </script>
-    <div id="temperatura-container">
-        <h2>Temperatura Actual</h2>
-        <!-- Elemento para mostrar la temperatura con el ID 'temperatura' -->
-        <p id="temperatura">Cargando...</p>
-    </div>
-    <div id="temperatura-container">
-        <h2>Temperatura Actual</h2>
-        <!-- Elemento para mostrar la temperatura con el ID 'temperatura' -->
-        <p id="temperatura2">Cargando...</p>
-    </div>
-    <div id="temperatura-container">
-        <h2>Temperatura Actual</h2>
-        <!-- Elemento para mostrar la temperatura con el ID 'temperatura' -->
-        <p id="temperatura3">Cargando...</p>
-    </div>
-    <script src="{{ url_for('static', filename='js/getINAStatus.js') }}"></script>
+                });
+            </script>
+        </section>
+        <section class="temp-container">
+            <div id="temp-sens1">
+                <h2>Temp 1</h2>
+                <p id="temp1">-- ºC</p>
+            </div>
+            <div id="temp-sens2">
+                <h2>Temp 2</h2>
+                <p id="temp2">-- ºC</p>
+            </div>
+            <div id="temp-sens3">
+                <h2>Temp 3</h2>
+                <p id="temp3">-- ºC</p>
+            </div>
+        </section>
     <script>
         var socket = io.connect('http://' + document.domain + ':' + location.port);
-      
         // Escucha el evento 'actualizar_temperatura'
         socket.on('actualizar_temperatura', function(data) {
-          var temperaturaElemento = document.getElementById('temperatura');
-          var temperaturaElemento2 = document.getElementById('temperatura2');
-          var temperaturaElemento3 = document.getElementById('temperatura3');
+          var temperaturaElemento = document.getElementById('temp1');
+          var temperaturaElemento2 = document.getElementById('temp2');
+          var temperaturaElemento3 = document.getElementById('temp3');
           temperaturaElemento.textContent = data.temperatura + ' °C';
           temperaturaElemento2.textContent = data.temperatura + ' °C';
           temperaturaElemento3.textContent = data.temperatura + ' °C';

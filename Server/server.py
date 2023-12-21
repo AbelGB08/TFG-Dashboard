@@ -3,8 +3,8 @@ from flask_socketio import SocketIO
 from tinydb import TinyDB, Query
 from datetime import datetime
 
-tinyDB = TinyDB('tinyDB.json')
-status = TinyDB('status.json')
+bateries = TinyDB('bateries.json')
+# status = TinyDB('status.json')
 temperature = TinyDB('temperature.json')
 
 app = Flask(__name__)
@@ -21,7 +21,7 @@ def getData(startDate='a', endDate='b', sensorName="*"):
     sensorName = request.args.get('sensorName')
     
     data = Query()
-    results = tinyDB.search((data.date >= startDate) & (data.date <= endDate) & (data.sensor == sensorName))
+    results = bateries.search((data.date >= startDate) & (data.date <= endDate) & (data.sensor == sensorName))
 
     volts = []
     amps = []
@@ -37,7 +37,7 @@ def getData(startDate='a', endDate='b', sensorName="*"):
 
 @app.route('/insertData/<volts>/<amps>/<pow>/<sensor>')
 def insertData(volts=0, amps=0, pow=0, sensor="*"):
-    dbCount = tinyDB.insert({
+    dbCount = bateries.insert({
         "volts": volts,
         "amps": amps,
         "pow": pow,
@@ -46,7 +46,7 @@ def insertData(volts=0, amps=0, pow=0, sensor="*"):
     })
 
     if dbCount > 100:
-        tinyDB.truncate()
+        bateries.truncate()
     
     return "NEW DATA INSERTED"
 
@@ -64,7 +64,8 @@ def insertTemp(temp=0, sensor="*"):
         temperature.truncate()
     
     return "NEW DATA INSERTED"
-    
+
+'''
 @app.route('/updateStatusSection')
 def updateStatusSection():
     return status.all()
@@ -74,6 +75,7 @@ def updateSensorStatus(sensorName="", statusName="", message=""):
     print(sensorName + "---" + statusName)
     sensor = Query()
     status.update({'status': statusName, 'message': message}, sensor.name == sensorName)
+'''
 
 def formatDate(date):
     date = date.split('T')
@@ -84,7 +86,7 @@ def formatDate(date):
 
 def handle_temperatura_actualizada(temperatura):
     # Transmite la temperatura actualizada a todos los clientes conectados
-    socketio.emit('actualizar_temperatura', {'temperatura': temperatura})
+    socketio.emit('actualizar_temperatura', {'sensId': 1, 'temperatura': temperatura})
 
 socketio.run(app, host='0.0.0.0', port=8000, debug=True)
 #app.run(host='0.0.0.0', port=8000, debug=True)
