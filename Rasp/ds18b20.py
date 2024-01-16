@@ -47,12 +47,15 @@ def read_temperature(sensor_id):
 # Listar los sensores conectados: ls /sys/bus/w1/devices/
 sensor_id = "28-3de10457dc9a"
 
-def temperature_proc(sensor_id):
-	# Leer la temperatura y mostrarla
-	temperature = read_temperature(sensor_id)
-	if temperature is not None:
-		#insertTemp(temp=temperature)
-		writeTempInDB(temperature, "TempSens1")
-		print(f"Temperatura: {temperature} ºC", end="\r")
-	else:
-		print("No se pudo leer la temperatura.")
+if __name__ == "__main__":
+     while True:
+        # Leer la temperatura y mostrarla
+        temperature = read_temperature(sensor_id)
+        if temperature is not None:
+            insertTemp(temp=temperature)
+            #writeTempInDB(temperature, "TempSens1")
+            print(f"Temperatura: {temperature} ºC", end="\r")
+        else:
+            print("No se pudo leer la temperatura.")
+
+        sleep(5)

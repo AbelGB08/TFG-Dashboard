@@ -2,7 +2,6 @@
 import logging
 from ina226 import INA226
 from time import sleep
-from ds18b20 import temperature_proc
 import requests
 
 
@@ -27,9 +26,9 @@ def init_sensors():
             sensor = INA226(busnum=1, address=address, max_expected_amps=20, shunt_ohms=0.002, log_level=logging.DEBUG)
             sensor.configure()
             SENSORS.append((sensor_name, sensor))
-            updateSensorStatus(sensor_name, "OK", "Sensor initialized correctly")
+            #updateSensorStatus(sensor_name, "OK", "Sensor initialized correctly")
         except Exception as e:
-            updateSensorStatus(sensor_name, "ERROR", "Could not initialize sensor")
+            #updateSensorStatus(sensor_name, "ERROR", "Could not initialize sensor")
             print(f"INIT ERROR for {sensor_name}: {e}")
 
 def writeInDB(voltage, amps, power, sensorName):
@@ -68,6 +67,5 @@ if __name__ == "__main__":
                 read(sensor, sensor_name)
                 print("==============================================================================================================================")
                 sleep(0.1)
-        temperature_proc(temp_sensor_id)
         sleep(1)
 
