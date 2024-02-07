@@ -11,22 +11,23 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
 </head>
 <body>
-    <section class="column">
-        <form class="form" action = "/getData" method = "GET">
-            <select class="sensorName" name="sensorName" required>
-                <option value="INA1">INA1</option>
-                <option value="INA2">INA2</option>
-                <option value="INA3">INA3</option>
-                <option value="INA4">INA4</option>
-            </select>
-            <input type="datetime-local" name="startDate" required>
-            <input type="datetime-local" name="endDate" required>
-            <input type = "submit" value = "Search" />
-        </form>
-    </section>
+    <div class="dashboard-container">
+        <section class="search-container">
+            <form class="search" action = "/getData" method = "GET">
+                <select class="sensorName" name="sensorName" required>
+                    <option value="INA1">INA1</option>
+                    <option value="INA2">INA2</option>
+                    <option value="INA3">INA3</option>
+                    <option value="INA4">INA4</option>
+                </select>
+                <input type="datetime-local" name="startDate" required>
+                <input type="datetime-local" name="endDate" required>
+                <input type = "submit" value = "Search" />
+            </form>
+        </section>
         <section class="chart-container">
             <h1 class="chart-title"> {{ sensor | safe }}</h1>
-            <canvas class="canvas" id="inaChart" width="800" height="320"></canvas>
+            <canvas class="chart-canvas" id="inaChart" width="" height=""></canvas>
             <script>
                 var ctx = document.getElementById("inaChart").getContext("2d");
                 var lineChart = new Chart(ctx, {
@@ -64,30 +65,20 @@
             </script>
         </section>
         <section class="temp-container">
-            <div id="temp-sens1">
+            <div class="temp-item" id="temp-sens1">
                 <h2>Temp 1</h2>
                 <p id="temp1">-- ºC</p>
             </div>
-            <div id="temp-sens2">
+            <div class="temp-item" id="temp-sens2">
                 <h2>Temp 2</h2>
                 <p id="temp2">-- ºC</p>
             </div>
-            <div id="temp-sens3">
+            <div class="temp-item" id="temp-sens3">
                 <h2>Temp 3</h2>
                 <p id="temp3">-- ºC</p>
             </div>
         </section>
-    <script>
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
-        // Escucha el evento 'actualizar_temperatura'
-        socket.on('actualizar_temperatura', function(data) {
-          var temperaturaElemento = document.getElementById('temp1');
-          var temperaturaElemento2 = document.getElementById('temp2');
-          var temperaturaElemento3 = document.getElementById('temp3');
-          temperaturaElemento.textContent = data.temperatura + ' °C';
-          temperaturaElemento2.textContent = data.temperatura + ' °C';
-          temperaturaElemento3.textContent = data.temperatura + ' °C';
-        });
-      </script>
+    </div>
+    <script src="{{ url_for('static', filename='scripts/temperatures.js') }}"></script>
 </body>
 </html>

@@ -6,21 +6,38 @@ body {
   background-color: #d7d7d7;
 }
 
-section {
-  flex: 1;
-  height: fit-content;
+.dashboard-container {
+  display: flex;
+  width: 100%;
+  max-height: 500px;
+  min-height: 500px;
+  padding-left: 10px;
+}
+
+.search-container,
+.chart-container,
+.temp-container {
+  display: flex;
+  flex-direction: column;
+  height: inherit;
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin: 10px;
+  align-items: center;
+  justify-content: center;
 }
 
 .chart-container {
-  margin-top: 10px;
+  padding-top: 30px;
+  width: 60%;
+}
+.search-container, .temp-container {
+  width: 15%;
 }
 
-form {
+.search {
   display: flex;
   flex-direction: column;
   margin-top: 30px;
@@ -54,19 +71,20 @@ h1, h2, p {
   margin-bottom: 40px;
 }
 
-canvas {
+.chart-canvas {
   border-radius: 5px;
 }
-.temp-container {
+
+/* .temp-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-top: 10px;
   margin-bottom: -5px;
-}
+} */
 
-.temp-container div {
+.temp-container .temp-item {
   margin-top: 5px;
   margin-bottom: 12px;
   border: 1px solid #ddd;

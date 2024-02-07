@@ -58,7 +58,7 @@ def insertTemp(temp=0, sensor="*"):
         "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     })
 
-    handle_temperatura_actualizada(sensor, temp)
+    handle_update_temp(sensor, temp)
     
     if dbCount > 100:
         temperature.truncate()
@@ -84,9 +84,9 @@ def formatDate(date):
 
     return fullDay[2] + '-' + fullDay[1] + '-' + fullDay[0] + ' ' + hour
 
-def handle_temperatura_actualizada(sensor, temperatura):
+def handle_update_temp(sensor, temperatura):
     # Transmite la temperatura actualizada a todos los clientes conectados
-    socketio.emit('actualizar_temperatura', {'id': sensor, 'temperatura': temperatura})
+    socketio.emit('update_temp', {'id': sensor, 'temp': temperatura})
 
 socketio.run(app, host='0.0.0.0', port=8000, debug=True)
 #app.run(host='0.0.0.0', port=8000, debug=True)
