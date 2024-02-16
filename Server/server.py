@@ -26,7 +26,7 @@ def index():
 
     return render_template("index.html", dates=dates, volts=volts, amps=amps, pow=pow, sensor="INA1")
 
-@app.route('/getData')
+@app.route('/getData', methods=['GET'])
 def getData(startDate='a', endDate='b', sensorName="*"):
     startDate = formatDate(request.args.get('startDate'))
     endDate = formatDate(request.args.get('endDate'))
@@ -47,7 +47,7 @@ def getData(startDate='a', endDate='b', sensorName="*"):
 
     return render_template("index.html", dates=dates, volts=volts, amps=amps, pow=pow, sensor=sensorName)
 
-@app.route('/insertData/<volts>/<amps>/<pow>/<sensor>')
+@app.route('/insertData/<volts>/<amps>/<pow>/<sensor>', methods=['POST'])
 def insertData(volts=0, amps=0, pow=0, sensor="*"):
     dbCount = bateries.insert({
         "volts": volts,
@@ -62,7 +62,7 @@ def insertData(volts=0, amps=0, pow=0, sensor="*"):
     
     return "NEW DATA INSERTED"
 
-@app.route('/insertTemp/<temp>/<sensor>')
+@app.route('/insertTemp/<temp>/<sensor>', methods=['POST'])
 def insertTemp(temp=0, sensor="*"):
     dbCount = temperature.insert({
         "sensor": sensor,

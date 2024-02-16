@@ -33,11 +33,11 @@ def init_sensors():
 
 def writeInDB(voltage, amps, power, sensorName):
     url = "http://192.168.1.71:8000/insertData/" + str(voltage/1000) + "/" + str(amps/1000) + "/" + str(power/1000) + "/" + sensorName
-    requests.get(url)
+    requests.post(url)
 
 def writeTempInDB(temp, sensorName):
     url = "http://192.168.1.71:8000/insertTemp/" + str(temp) + "/" + sensorName
-    requests.get(url)
+    requests.post(url)
 
 def updateSensorStatus(sensorName, status, message):
     url = "http://192.168.1.71:8000/updateSensorStatus/" + sensorName + "/" + status + "/" + message
