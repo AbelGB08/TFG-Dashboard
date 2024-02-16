@@ -12,7 +12,19 @@ socketio = SocketIO(app)
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    results = bateries.all()[-5:]
+
+    volts = []
+    amps = []
+    pow = []
+    dates = []
+    for result in results:
+        volts.append(result["volts"])
+        amps.append(result["amps"])
+        pow.append(result["pow"])
+        dates.append(result["date"])
+
+    return render_template("index.html", dates=dates, volts=volts, amps=amps, pow=pow, sensor="INA1")
 
 @app.route('/getData')
 def getData(startDate='a', endDate='b', sensorName="*"):
