@@ -1,7 +1,6 @@
 body {
   display: flex;
-  margin: 0;
-  padding: 0;
+  padding-top: 4vw;
   font-family: 'Arial', sans-serif;
   background-color: #d7d7d7;
 }
@@ -41,6 +40,7 @@ body {
   display: flex;
   flex-direction: column;
   margin-top: 30px;
+  width: 265px;
 }
 
 input, select {
@@ -91,4 +91,27 @@ h1, h2, p {
   border-radius: 10px;
   width: 200px;
   height: 100px;
+}
+
+.navbar {
+  position: fixed; /* Fijar la barra de navegación en una posición */
+  top: 0; /* Colocarla en la parte superior de la ventana */
+  left: 0; /* Alinearla a la izquierda */
+  width: 100%; /* Establecer su ancho al 100% */
+  display: flex;
+  background-color: #333;
+  padding: 10px 20px; /* Ajustar el espaciado según sea necesario */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Agregar sombra para un aspecto elevado */
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px; /* Ajustar el espaciado según sea necesario */
+}
+
+.navbar a:hover {
+  background-color: #ddd;
+  color: black;
+  border-radius: 20px;
 }

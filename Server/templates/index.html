@@ -11,6 +11,10 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
 </head>
 <body>
+    <div class="navbar">
+        <a href="/">Search</a>
+        <a href="/live">Live</a>
+    </div>
     <div class="dashboard-container">
         <section class="search-container">
             <form class="search" action = "/getData" method = "GET">
@@ -19,6 +23,7 @@
                     <option value="INA2">INA2</option>
                     <option value="INA3">INA3</option>
                     <option value="INA4">INA4</option>
+                    <option value="INA5">INA5</option>
                 </select>
                 <input type="datetime-local" name="startDate" required>
                 <input type="datetime-local" name="endDate" required>
