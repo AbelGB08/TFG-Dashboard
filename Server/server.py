@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, redirect
 from flask_socketio import SocketIO
 from tinydb import TinyDB, Query
 from datetime import datetime
@@ -12,12 +12,15 @@ socketio = SocketIO(app)
 
 @app.route('/')
 def index():
-
-    return render_template("index.html")
+    return redirect('/live')
 
 @app.route('/live')
 def live():
     return render_template("live.html")
+
+@app.route('/search')
+def search():
+    return render_template("index.html")
 
 @app.route('/getData', methods=['GET'])
 def getData(startDate='a', endDate='b', sensorName="*"):
