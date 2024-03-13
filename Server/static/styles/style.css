@@ -94,20 +94,20 @@ h1, h2, p {
 }
 
 .navbar {
-  position: fixed; /* Fijar la barra de navegación en una posición */
-  top: 0; /* Colocarla en la parte superior de la ventana */
-  left: 0; /* Alinearla a la izquierda */
-  width: 100%; /* Establecer su ancho al 100% */
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%;
   display: flex;
   background-color: #333;
-  padding: 10px 20px; /* Ajustar el espaciado según sea necesario */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Agregar sombra para un aspecto elevado */
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navbar a {
   color: white;
   text-decoration: none;
-  padding: 10px 20px; /* Ajustar el espaciado según sea necesario */
+  padding: 10px 20px;
 }
 
 .navbar a:hover {
