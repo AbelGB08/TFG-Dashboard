@@ -68,7 +68,6 @@ var ina2 = new Chart(ctx2, {
 });
 
 socket.on('update_chart', function(data) {
-    console.log(data);
     var chart = null;
     switch (data.sensor) {
         case 'INA1':
