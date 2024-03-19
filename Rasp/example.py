@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import logging
 from ina226 import INA226
 from time import sleep
@@ -13,7 +14,8 @@ SENSORS_DATA = {
     "INA1": 0x40,
     "INA2": 0x41,
     "INA3": 0x42,
-    "INA4": 0x43
+    "INA4": 0x43,
+    "INA5": 0x44
 }
 
 SENSORS = []
@@ -32,15 +34,15 @@ def init_sensors():
             print(f"INIT ERROR for {sensor_name}: {e}")
 
 def writeInDB(voltage, amps, power, sensorName):
-    url = "http://192.168.1.71:8000/insertData/" + str(voltage/1000) + "/" + str(amps/1000) + "/" + str(power/1000) + "/" + sensorName
+    url = "http://localhost:5000/insertData/" + str(voltage/1000) + "/" + str(amps/1000) + "/" + str(power/1000) + "/" + sensorName
     requests.post(url)
 
 def writeTempInDB(temp, sensorName):
-    url = "http://192.168.1.71:8000/insertTemp/" + str(temp) + "/" + sensorName
+    url = "http://localhost:5000/insertTemp/" + str(temp) + "/" + sensorName
     requests.post(url)
 
 def updateSensorStatus(sensorName, status, message):
-    url = "http://192.168.1.71:8000/updateSensorStatus/" + sensorName + "/" + status + "/" + message
+    url = "http://localhost:5000/updateSensorStatus/" + sensorName + "/" + status + "/" + message
     requests.get(url)
 
 def read(sensor, sensorName):
@@ -66,6 +68,3 @@ if __name__ == "__main__":
                 print("==============================================================================================================================")
                 read(sensor, sensor_name)
                 print("==============================================================================================================================")
-                sleep(0.1)
-        sleep(1)
-

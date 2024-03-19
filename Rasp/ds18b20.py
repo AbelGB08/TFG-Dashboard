@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import os
 from time import sleep
 from datetime import datetime
@@ -20,8 +22,8 @@ def insertTemp(temp=0, sensor="ds18b20"):
         temperatureDB.truncate()
 
 def writeTempInDB(temp, sensorName):
-    url = "http://192.168.1.71:8000/insertTemp/" + str(temp) + "/" + sensorName
-    requests.get(url)
+    url = "http://localhost:5000/insertTemp/" + str(temp) + "/" + sensorName
+    requests.post(url)
 
 # Función para leer la temperatura desde un sensor DS18B20
 def read_temperature(sensor_id):
@@ -45,17 +47,26 @@ def read_temperature(sensor_id):
         return None
 
 # Listar los sensores conectados: ls /sys/bus/w1/devices/
-sensor_id = "28-3de10457dc9a"
+sensor_id1 = "28-3ce104571023"
+sensor_id2 = "28-3ce104571b69"
+sensor_id3 = "28-3ce10457c7cf"
+sensor_id4 = "28-3ce10457e22d"
 
 if __name__ == "__main__":
      while True:
         # Leer la temperatura y mostrarla
-        temperature = read_temperature(sensor_id)
-        if temperature is not None:
-            insertTemp(temp=temperature)
-            #writeTempInDB(temperature, "TempSens1")
-            print(f"Temperatura: {temperature} ºC", end="\r")
+        temperature1 = read_temperature(sensor_id1)
+        temperature2 = read_temperature(sensor_id2)
+        temperature3 = read_temperature(sensor_id3)
+        temperature4 = read_temperature(sensor_id4)
+        if temperature1 is not None:
+            insertTemp(temp=temperature1)
+            writeTempInDB(temperature1, "temp1")
+            writeTempInDB(temperature2, "temp2")
+            writeTempInDB(temperature3, "temp3")
+            writeTempInDB(temperature4, "temp4")
+            print(f"Temperatura: {temperature1} ºC", end="\r")
         else:
             print("No se pudo leer la temperatura.")
 
-        sleep(5)
+        sleep(2)
