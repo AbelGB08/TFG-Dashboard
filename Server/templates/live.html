@@ -31,7 +31,7 @@
             <canvas class="chart-canvas" id="ina3" width="" height=""></canvas>
         </section>
         <section class="chart-container">
-            <h1 class="chart-title">BUS_20V</h1>
+            <h1 class="chart-title">BUS_19V</h1>
             <canvas class="chart-canvas" id="ina4" width="" height=""></canvas>
         </section>
     </div>
@@ -41,30 +41,11 @@
             <canvas class="chart-canvas" id="ina5" width="" height=""></canvas>
         </section>
         <section class="chart-container">
-            <div class="row">
-                <div class="temp-item" id="temp-sens1">
-                    <h2>Temp 1</h2>
-                    <p id="temp1">-- ºC</p>
-                </div>
-                <div class="temp-item" id="temp-sens2">
-                    <h2>Temp 2</h2>
-                    <p id="temp2">-- ºC</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="temp-item" id="temp-sens3">
-                    <h2>Temp 3</h2>
-                    <p id="temp3">-- ºC</p>
-                </div>
-                <div class="temp-item" id="temp-sens4">
-                    <h2>Temp 4</h2>
-                    <p id="temp4">-- ºC</p>
-                </div>
-            </div>
+            <h1 class="chart-title">TEMPERATURES</h1>
+            <canvas class="chart-canvas" id="temps" width="" height=""></canvas>
         </section>
     </div>
 
     <script src="{{ url_for('static', filename='scripts/updateChart.js') }}"></script>
-    <script src="{{ url_for('static', filename='scripts/temperatures.js') }}"></script>
 </body>
 </html>

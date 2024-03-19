@@ -70,7 +70,7 @@ def insertTemp(temp=0, sensor="*"):
     }
     dbCount = temperature.insert(data)
 
-    handle_update_temp(sensor, temp)
+    handle_update_chart(data)
     
     if dbCount > 100:
         temperature.truncate()
