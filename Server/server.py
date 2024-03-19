@@ -103,5 +103,5 @@ def handle_update_temp(sensor, temperatura):
 def handle_update_chart(data):
     socketio.emit('update_chart', data)
 
-socketio.run(app, host='0.0.0.0', port=8000, debug=True)
+socketio.run(app, host='0.0.0.0', port=8000, debug=True, allow_unsafe_werkzeug=True)
 #app.run(host='0.0.0.0', port=8000, debug=True)
