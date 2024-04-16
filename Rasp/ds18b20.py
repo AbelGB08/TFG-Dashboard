@@ -21,8 +21,8 @@ def insertTemp(temp=0, sensor="ds18b20"):
     if dbCount > 100:
         temperatureDB.truncate()
 
-def writeTempInDB(temp, sensorName):
-    url = "http://localhost:5000/insertTemp/" + str(temp) + "/" + sensorName
+def writeTempInDB(temp1, temp2, temp3, temp4):
+    url = "http://localhost:5000/insertTemp/" + str(temp1) + "/" + str(temp2) + "/" + str(temp3) + "/" + str(temp4)
     requests.post(url)
 
 # Función para leer la temperatura desde un sensor DS18B20
@@ -59,12 +59,8 @@ if __name__ == "__main__":
         temperature2 = read_temperature(sensor_id2)
         temperature3 = read_temperature(sensor_id3)
         temperature4 = read_temperature(sensor_id4)
-        if temperature1 is not None:
-            insertTemp(temp=temperature1)
-            writeTempInDB(temperature1, "temp1")
-            writeTempInDB(temperature2, "temp2")
-            writeTempInDB(temperature3, "temp3")
-            writeTempInDB(temperature4, "temp4")
+        if temperature1 is not None and temperature2 is not None and temperature3 is not None and temperature4 is not None:
+            writeTempInDB(temperature1, temperature2, temperature3, temperature4)
             print(f"Temperatura: {temperature1} ºC", end="\r")
         else:
             print("No se pudo leer la temperatura.")

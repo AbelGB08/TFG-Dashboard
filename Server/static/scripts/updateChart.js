@@ -1,12 +1,14 @@
 var socket = io.connect('http://' + document.domain + ':' + location.port);
+var chart = null;
+var ctx = null;
 var charts = [];
 var lastDate = null;
-const maxDataPoints = 50;
+const maxDataPoints = 25;
 
 function initCharts() {
     for (var i = 1; i <= 5; i++) {
-        var ctx = document.getElementById('ina' + i).getContext('2d');
-        var chart = new Chart(ctx, {
+        ctx = document.getElementById('ina' + i).getContext('2d');
+        chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: [],
@@ -35,13 +37,17 @@ function initCharts() {
             },
             options: {
                 responsive: true,
-                animation: false
+                animation: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'x'
+                },
             }
         });
         charts.push(chart);
     }
-    var ctx = document.getElementById('temps').getContext('2d');
-    var chart = new Chart(ctx, {
+    ctx = document.getElementById('temps').getContext('2d');
+    chart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: [],
@@ -77,7 +83,103 @@ function initCharts() {
         },
         options: {
             responsive: true,
-            animation: false
+            animation: false,
+            interaction: {
+                intersect: false,
+                mode: 'x'
+            },
+        }
+    });
+    charts.push(chart);
+
+    ctx = document.getElementById('sbc').getContext('2d');
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                    label: 'Amps1',
+                    borderColor: "rgb(255,0,0)",
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    data: [],
+                },
+                {
+                    label: 'Amps2',
+                    borderColor: "rgb(255,255,0)",
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    data: [],
+                },
+                {
+                    label: "Amps3",
+                    borderColor: "rgb(0,0,255)",
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    lineTension: 0.5
+                },
+                {
+                    label: "Amps4",
+                    borderColor: "rgb(0,255,0)",
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    lineTension: 0.5
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            animation: false,
+            interaction: {
+                intersect: false,
+                mode: 'x'
+            },
+        }
+    });
+    charts.push(chart);
+
+    ctx = document.getElementById('sbt').getContext('2d');
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                    label: 'temp1',
+                    borderColor: "rgb(255,0,0)",
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    data: [],
+                },
+                {
+                    label: 'temp2',
+                    borderColor: "rgb(255,255,0)",
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    data: [],
+                },
+                {
+                    label: "temp3",
+                    borderColor: "rgb(0,0,255)",
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    lineTension: 0.5
+                },
+                {
+                    label: "temp4",
+                    borderColor: "rgb(0,255,0)",
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    lineTension: 0.5
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            animation: false,
+            interaction: {
+                intersect: false,
+                mode: 'x'
+            },
         }
     });
     charts.push(chart);
@@ -104,8 +206,15 @@ socket.on('update_chart', function(data) {
         case 'INA5':
             chart = charts[4];
             break;
-        default:
+        case 'temps':
             chart = charts[5];
+            break;
+        case 'sbc':
+            chart = charts[6];
+            break;
+        case 'sbt':
+            chart = charts[7];
+            break;
     }
     if (chart.id != 5) {
         chart.data.labels.push(data.date.split(" ")[1]);
@@ -113,24 +222,12 @@ socket.on('update_chart', function(data) {
         chart.data.datasets[1].data.push(data.amps);
         chart.data.datasets[2].data.push(data.pow);
     } else {
-        if (data.date.split(" ")[1] !== lastDate) { // Comprueba si el date es diferente al último date agregado
+        if (data.sensor == 'temps') {
             chart.data.labels.push(data.date.split(" ")[1]);
-            lastDate = data.date.split(" ")[1]; // Actualiza el último date agregado
-        }
-        switch (data.sensor) {
-            case 'temp1':
-                chart.data.datasets[0].data.push(data.temp);
-                break;
-            case 'temp2':
-                chart.data.datasets[1].data.push(data.temp);
-                break;
-            case 'temp3':
-                chart.data.datasets[2].data.push(data.temp);
-                break;
-            case 'temp4':
-                chart.data.datasets[3].data.push(data.temp);
-                break;
-
+            chart.data.datasets[0].data.push(data.base);
+            chart.data.datasets[1].data.push(data.chimenea);
+            chart.data.datasets[2].data.push(data.exterior);
+            chart.data.datasets[3].data.push(data.bandeja);
         }
     }
 

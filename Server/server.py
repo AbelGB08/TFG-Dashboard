@@ -4,8 +4,9 @@ from tinydb import TinyDB, Query
 from datetime import datetime
 
 bateries = TinyDB('bateries.json')
-# status = TinyDB('status.json')
 temperature = TinyDB('temperature.json')
+victron = TinyDB('victron.json')
+shadowBase = TinyDB('shadowBase.json')
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -61,21 +62,71 @@ def insertData(volts=0, amps=0, pow=0, sensor="*"):
     
     return jsonify(message="NEW DATA INSERTED", data=data)
 
-@app.route('/insertTemp/<temp>/<sensor>', methods=['POST'])
-def insertTemp(temp=0, sensor="*"):
+@app.route('/insertTemp/<temp1>/<temp2>/<temp3>/<temp4>/', methods=['POST'])
+def insertTemp(temp1=0, temp2=0, temp3=0, temp4=0):
     data = {
-        "sensor": sensor,
-        "temp": temp,
+        "base": temp1,
+        "chimenea": temp2,
+        "exterior": temp3,
+        "bandeja": temp4,
         "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     }
     dbCount = temperature.insert(data)
 
+    data["sensor"] = "temps"
     handle_update_chart(data)
     
     if dbCount > 100:
         temperature.truncate()
     
     return jsonify(message="NEW DATA INSERTED", data=data)
+
+@app.route('/insertVictronVoltage/', methods=['POST'])
+def insertVictron(volts=0):
+    data = request.json
+    print(data)
+    dbCount = victron.insert(data[0])
+
+    handle_update_chart(data)
+    
+    if dbCount > 100:
+        victron.truncate()
+    
+    return jsonify(message="NEW DATA INSERTED", data=data)
+
+@app.route('/insertCurrentShadowBase/', methods=['POST'])
+def insertCurrentShadowBase():
+    datos = request.json
+    print ("CURRENTS: ",datos)
+    # data = {
+    #     "volts": volts,
+    #     "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    # }
+    # dbCount = victron.insert(data)
+
+    # handle_update_chart(data)
+    
+    # if dbCount > 100:
+    #     victron.truncate()
+    
+    return jsonify(message="NEW DATA INSERTED", data=datos)
+
+@app.route('/insertTemperatureShadowBase/', methods=['POST'])
+def insertTemperatureShadowBase():
+    datos = request.json
+    print ("TEMPS: ", datos)
+    # data = {
+    #     "volts": volts,
+    #     "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    # }
+    # dbCount = victron.insert(data)
+
+    # handle_update_chart(data)
+    
+    # if dbCount > 100:
+    #     victron.truncate()
+    
+    return jsonify(message="NEW DATA INSERTED", data=datos)
 
 '''
 @app.route('/updateStatusSection')
