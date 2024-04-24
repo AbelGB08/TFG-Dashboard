@@ -216,13 +216,13 @@ socket.on('update_chart', function(data) {
             chart = charts[7];
             break;
     }
-    if (chart.id != 5) {
+    if (chart.id != 5 && chart.id != 6 && chart.id != 7) {
         chart.data.labels.push(data.date.split(" ")[1]);
         chart.data.datasets[0].data.push(data.volts);
         chart.data.datasets[1].data.push(data.amps);
         chart.data.datasets[2].data.push(data.pow);
     } else {
-        if (data.sensor == 'temps') {
+        if (data.sensor == 'temps' || data.sensor == "sbt" || data.sensor == "sbc") {
             chart.data.labels.push(data.date.split(" ")[1]);
             chart.data.datasets[0].data.push(data.base);
             chart.data.datasets[1].data.push(data.chimenea);

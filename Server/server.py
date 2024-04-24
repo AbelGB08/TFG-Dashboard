@@ -62,7 +62,7 @@ def insertData(volts=0, amps=0, pow=0, sensor="*"):
     
     return jsonify(message="NEW DATA INSERTED", data=data)
 
-@app.route('/insertTemp/<temp1>/<temp2>/<temp3>/<temp4>/', methods=['POST'])
+@app.route('/insertTemp/<temp1>/<temp2>/<temp3>/<temp4>', methods=['POST'])
 def insertTemp(temp1=0, temp2=0, temp3=0, temp4=0):
     data = {
         "base": temp1,
@@ -94,39 +94,33 @@ def insertVictron(volts=0):
     
     return jsonify(message="NEW DATA INSERTED", data=data)
 
-@app.route('/insertCurrentShadowBase/', methods=['POST'])
-def insertCurrentShadowBase():
-    datos = request.json
-    print ("CURRENTS: ",datos)
-    # data = {
-    #     "volts": volts,
-    #     "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-    # }
-    # dbCount = victron.insert(data)
+@app.route('/insertCurrentShadowBase/<curr1>/<curr2>/<curr3>/<curr4>', methods=['POST'])
+def insertCurrentShadowBase(curr1=0, curr2=0, curr3=0, curr4=0):
+    data = {
+        "base": curr1,
+        "chimenea": curr2,
+        "exterior": curr3,
+        "bandeja": curr4,
+        "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    }
+    data["sensor"] = "sbc"
+    handle_update_chart(data)
+    
+    return jsonify(message="NEW DATA INSERTED", data=data)
 
-    # handle_update_chart(data)
+@app.route('/insertTemperatureShadowBase/<temp1>/<temp2>/<temp3>/<temp4>', methods=['POST'])
+def insertTemperatureShadowBase(temp1=0, temp2=0, temp3=0, temp4=0):
+    data = {
+        "base": temp1,
+        "chimenea": temp2,
+        "exterior": temp3,
+        "bandeja": temp4,
+        "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    }
+    data["sensor"] = "sbt"
+    handle_update_chart(data)
     
-    # if dbCount > 100:
-    #     victron.truncate()
-    
-    return jsonify(message="NEW DATA INSERTED", data=datos)
-
-@app.route('/insertTemperatureShadowBase/', methods=['POST'])
-def insertTemperatureShadowBase():
-    datos = request.json
-    print ("TEMPS: ", datos)
-    # data = {
-    #     "volts": volts,
-    #     "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-    # }
-    # dbCount = victron.insert(data)
-
-    # handle_update_chart(data)
-    
-    # if dbCount > 100:
-    #     victron.truncate()
-    
-    return jsonify(message="NEW DATA INSERTED", data=datos)
+    return jsonify(message="NEW DATA INSERTED", data=data)
 
 '''
 @app.route('/updateStatusSection')
@@ -154,5 +148,5 @@ def handle_update_temp(sensor, temperatura):
 def handle_update_chart(data):
     socketio.emit('update_chart', data)
 
-socketio.run(app, host='0.0.0.0', port=8000, debug=True, allow_unsafe_werkzeug=True)
+socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
 #app.run(host='0.0.0.0', port=8000, debug=True)
