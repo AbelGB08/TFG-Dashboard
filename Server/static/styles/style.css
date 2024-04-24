@@ -9,8 +9,7 @@ body {
 .dashboard-container {
   display: flex;
   width: 100%;
-  max-height: 500px;
-  min-height: 500px;
+  max-height: 600px;
   padding-left: 10px;
 }
 
@@ -45,14 +44,14 @@ body {
   width: 265px;
 }
 
-input, select {
+input, select, button {
   margin-bottom: 47px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 5px;
 }
 
-input[type="submit"] {
+button {
   background-color: #4caf50;
   color: #fff;
   cursor: pointer;

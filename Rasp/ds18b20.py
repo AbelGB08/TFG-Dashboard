@@ -6,20 +6,20 @@ from datetime import datetime
 from tinydb import TinyDB, Query
 import requests
 
-temperatureDB = TinyDB('temperature.json')
+#temperatureDB = TinyDB('temperature.json')
 
 # Definir la ruta del directorio de los sensores DS18B20
 sensor_directory = '/sys/bus/w1/devices/'
 
-def insertTemp(temp=0, sensor="ds18b20"):
-    dbCount = temperatureDB.insert({
-        "temp": temp,
-        "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
-        "sensor": sensor
-    })
+# def insertTemp(temp=0, sensor="ds18b20"):
+#     dbCount = temperatureDB.insert({
+#         "temp": temp,
+#         "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
+#         "sensor": sensor
+#     })
 
-    if dbCount > 100:
-        temperatureDB.truncate()
+#     if dbCount > 100:
+#         temperatureDB.truncate()
 
 def writeTempInDB(temp1, temp2, temp3, temp4):
     url = "http://localhost:5000/insertTemp/" + str(temp1) + "/" + str(temp2) + "/" + str(temp3) + "/" + str(temp4)

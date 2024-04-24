@@ -3,10 +3,10 @@ from flask_socketio import SocketIO
 from tinydb import TinyDB, Query
 from datetime import datetime
 
-bateries = TinyDB('bateries.json')
-temperature = TinyDB('temperature.json')
-victron = TinyDB('victron.json')
-shadowBase = TinyDB('shadowBase.json')
+bateries = TinyDB('./database/bateries.json')
+temperature = TinyDB('./database/temperature.json')
+victron = TinyDB('./database/victron.json')
+shadowBase = TinyDB('./database/shadowBase.json')
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -42,7 +42,9 @@ def getData(startDate='a', endDate='b', sensorName="*"):
         pow.append(result["pow"])
         dates.append(result["date"])
 
-    return render_template("index.html", dates=dates, volts=volts, amps=amps, pow=pow, sensor=sensorName)
+    response = [volts, amps, pow, dates]
+    
+    return jsonify(message="GET DATA RESPONSE", data=response)
 
 @app.route('/insertData/<volts>/<amps>/<pow>/<sensor>', methods=['POST'])
 def insertData(volts=0, amps=0, pow=0, sensor="*"):
@@ -57,7 +59,7 @@ def insertData(volts=0, amps=0, pow=0, sensor="*"):
 
     handle_update_chart(data)
 
-    if dbCount > 100:
+    if dbCount > 10000:
         bateries.truncate()
     
     return jsonify(message="NEW DATA INSERTED", data=data)
