@@ -6,7 +6,8 @@ from datetime import datetime
 bateries = TinyDB('./database/bateries.json')
 temperature = TinyDB('./database/temperature.json')
 victron = TinyDB('./database/victron.json')
-shadowBase = TinyDB('./database/shadowBase.json')
+shadowBaseCurrents = TinyDB('./database/shadowBaseCurrents.json')
+shadowBaseTemperatures = TinyDB('./database/shadowBaseTemperatures.json')
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -28,23 +29,73 @@ def getData(startDate='a', endDate='b', sensorName="*"):
     startDate = formatDate(request.args.get('startDate'))
     endDate = formatDate(request.args.get('endDate'))
     sensorName = request.args.get('sensorName')
-    
     data = Query()
-    results = bateries.search((data.date >= startDate) & (data.date <= endDate) & (data.sensor == sensorName))
+    if sensorName.startswith("INA"):
+        results = bateries.search((data.date >= startDate) & (data.date <= endDate) & (data.sensor == sensorName))
 
-    volts = []
-    amps = []
-    pow = []
-    dates = []
-    for result in results:
-        volts.append(result["volts"])
-        amps.append(result["amps"])
-        pow.append(result["pow"])
-        dates.append(result["date"])
+        volts = []
+        amps = []
+        pow = []
+        dates = []
+        for result in results:
+            volts.append(result["volts"])
+            amps.append(result["amps"])
+            pow.append(result["pow"])
+            dates.append(result["date"])
 
-    response = [volts, amps, pow, dates]
-    
+        response = [volts, amps, pow, dates]
+            
+    elif sensorName == "BT":
+        results = temperature.search((data.date >= startDate) & (data.date <= endDate))
+        base = []
+        chimenea = []
+        exterior = []
+        bandeja = []
+        dates = []
+        for result in results:
+            base.append(result["base"])
+            chimenea.append(result["chimenea"])
+            exterior.append(result["exterior"])
+            bandeja.append(result["bandeja"])
+            dates.append(result["date"])
+
+        response = [base, chimenea, exterior, bandeja, dates]
+        
+    elif sensorName == "SBC":
+        results = shadowBaseCurrents.search((data.date >= startDate) & (data.date <= endDate))
+        amps1 = []
+        amps2 = []
+        amps3 = []
+        amps4 = []
+        dates = []
+        for result in results:
+            amps1.append(result["amps1"])
+            amps2.append(result["amps2"])
+            amps3.append(result["amps3"])
+            amps4.append(result["amps4"])
+            dates.append(result["date"])
+
+        response = [amps1, amps2, amps3, amps4, dates]
+        
+    elif sensorName == "SBT":
+        results = shadowBaseTemperatures.search((data.date >= startDate) & (data.date <= endDate))
+        temp1 = []
+        temp2 = []
+        temp3 = []
+        temp4 = []
+        dates = []
+        for result in results:
+            temp1.append(result["temp1"])
+            temp2.append(result["temp2"])
+            temp3.append(result["temp3"])
+            temp4.append(result["temp4"])
+            dates.append(result["date"])
+
+        response = [temp1, temp2, temp3, temp4, dates]
+        
     return jsonify(message="GET DATA RESPONSE", data=response)
+    
+
 
 @app.route('/insertData/<volts>/<amps>/<pow>/<sensor>', methods=['POST'])
 def insertData(volts=0, amps=0, pow=0, sensor="*"):
@@ -99,12 +150,15 @@ def insertVictron(volts=0):
 @app.route('/insertCurrentShadowBase/<curr1>/<curr2>/<curr3>/<curr4>', methods=['POST'])
 def insertCurrentShadowBase(curr1=0, curr2=0, curr3=0, curr4=0):
     data = {
-        "base": curr1,
-        "chimenea": curr2,
-        "exterior": curr3,
-        "bandeja": curr4,
+        "amps1": curr1,
+        "amps2": curr2,
+        "amps3": curr3,
+        "amps4": curr4,
         "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     }
+    dbCount = shadowBaseCurrents.insert(data)
+    if dbCount > 100:
+        temperature.truncate()
     data["sensor"] = "sbc"
     handle_update_chart(data)
     
@@ -113,12 +167,15 @@ def insertCurrentShadowBase(curr1=0, curr2=0, curr3=0, curr4=0):
 @app.route('/insertTemperatureShadowBase/<temp1>/<temp2>/<temp3>/<temp4>', methods=['POST'])
 def insertTemperatureShadowBase(temp1=0, temp2=0, temp3=0, temp4=0):
     data = {
-        "base": temp1,
-        "chimenea": temp2,
-        "exterior": temp3,
-        "bandeja": temp4,
+        "temp1": temp1,
+        "temp2": temp2,
+        "temp3": temp3,
+        "temp4": temp4,
         "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     }
+    dbCount = shadowBaseTemperatures.insert(data)
+    if dbCount > 100:
+        temperature.truncate()
     data["sensor"] = "sbt"
     handle_update_chart(data)
     

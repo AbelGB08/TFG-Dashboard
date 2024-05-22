@@ -221,14 +221,24 @@ socket.on('update_chart', function(data) {
         chart.data.datasets[0].data.push(data.volts);
         chart.data.datasets[1].data.push(data.amps);
         chart.data.datasets[2].data.push(data.pow);
-    } else {
-        if (data.sensor == 'temps' || data.sensor == "sbt" || data.sensor == "sbc") {
-            chart.data.labels.push(data.date.split(" ")[1]);
-            chart.data.datasets[0].data.push(data.base);
-            chart.data.datasets[1].data.push(data.chimenea);
-            chart.data.datasets[2].data.push(data.exterior);
-            chart.data.datasets[3].data.push(data.bandeja);
-        }
+    } else if (data.sensor == 'temps') {
+        chart.data.labels.push(data.date.split(" ")[1]);
+        chart.data.datasets[0].data.push(data.base);
+        chart.data.datasets[1].data.push(data.chimenea);
+        chart.data.datasets[2].data.push(data.exterior);
+        chart.data.datasets[3].data.push(data.bandeja);
+    } else if (data.sensor == 'sbc') {
+        chart.data.labels.push(data.date.split(" ")[1]);
+        chart.data.datasets[0].data.push(data.amps1);
+        chart.data.datasets[1].data.push(data.amps2);
+        chart.data.datasets[2].data.push(data.amps3);
+        chart.data.datasets[3].data.push(data.amps4);
+    } else if (data.sensor == 'sbt') {
+        chart.data.labels.push(data.date.split(" ")[1]);
+        chart.data.datasets[0].data.push(data.temp1);
+        chart.data.datasets[1].data.push(data.temp2);
+        chart.data.datasets[2].data.push(data.temp3);
+        chart.data.datasets[3].data.push(data.temp4);
     }
 
     if (chart.data.labels.length > maxDataPoints) {
