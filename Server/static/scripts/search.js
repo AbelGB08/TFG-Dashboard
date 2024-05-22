@@ -40,8 +40,7 @@ document.getElementById('submitButton').addEventListener('click', async function
     const form = document.getElementById('dataForm');
     const formData = new FormData(form);
     const queryString = new URLSearchParams(formData).toString();
-
-    var sensorName = queryString.split('&')[0].split('=')[1];
+    const sensorName = queryString.split('&')[0].split('=')[1];
 
     try {
         const response = await fetch(`/getData?${queryString}`, {
