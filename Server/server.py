@@ -109,7 +109,7 @@ def insertData(volts=0, amps=0, pow=0, sensor="*"):
 
     handle_update_chart(data)
 
-    # dbCount = bateries.insert(data)
+    dbCount = bateries.insert(data)
     # if dbCount > 10000:
     #     bateries.truncate()
     
@@ -128,7 +128,7 @@ def insertTemp(temp1=0, temp2=0, temp3=0, temp4=0):
 
     handle_update_chart(data)
     
-    # dbCount = temperature.insert(data)
+    dbCount = temperature.insert(data)
     # if dbCount > 100:
         # temperature.truncate()
     
@@ -141,7 +141,7 @@ def insertVictron(volts=0):
 
     handle_update_chart(data)
     
-    # dbCount = victron.insert(data[0])
+    dbCount = victron.insert(data[0])
     # if dbCount > 100:
         # victron.truncate()
     
@@ -158,7 +158,7 @@ def insertCurrentShadowBase(curr1=0, curr2=0, curr3=0, curr4=0):
     }
     data["sensor"] = "sbc"
 
-    # dbCount = shadowBaseCurrents.insert(data)
+    dbCount = shadowBaseCurrents.insert(data)
     # if dbCount > 100:
         # temperature.truncate()
 
@@ -177,7 +177,7 @@ def insertTemperatureShadowBase(temp1=0, temp2=0, temp3=0, temp4=0):
     }
     data["sensor"] = "sbt"
 
-    # dbCount = shadowBaseTemperatures.insert(data)
+    dbCount = shadowBaseTemperatures.insert(data)
     # if dbCount > 100:
         # temperature.truncate()
     
