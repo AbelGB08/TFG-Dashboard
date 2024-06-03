@@ -106,12 +106,12 @@ def insertData(volts=0, amps=0, pow=0, sensor="*"):
         "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
         "sensor": sensor
     }
-    dbCount = bateries.insert(data)
 
     handle_update_chart(data)
 
-    if dbCount > 10000:
-        bateries.truncate()
+    # dbCount = bateries.insert(data)
+    # if dbCount > 10000:
+    #     bateries.truncate()
     
     return jsonify(message="NEW DATA INSERTED", data=data)
 
@@ -124,13 +124,13 @@ def insertTemp(temp1=0, temp2=0, temp3=0, temp4=0):
         "bandeja": temp4,
         "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     }
-    dbCount = temperature.insert(data)
-
     data["sensor"] = "temps"
+
     handle_update_chart(data)
     
-    if dbCount > 100:
-        temperature.truncate()
+    # dbCount = temperature.insert(data)
+    # if dbCount > 100:
+        # temperature.truncate()
     
     return jsonify(message="NEW DATA INSERTED", data=data)
 
@@ -138,12 +138,12 @@ def insertTemp(temp1=0, temp2=0, temp3=0, temp4=0):
 def insertVictron(volts=0):
     data = request.json
     print(data)
-    dbCount = victron.insert(data[0])
 
     handle_update_chart(data)
     
-    if dbCount > 100:
-        victron.truncate()
+    # dbCount = victron.insert(data[0])
+    # if dbCount > 100:
+        # victron.truncate()
     
     return jsonify(message="NEW DATA INSERTED", data=data)
 
@@ -156,10 +156,12 @@ def insertCurrentShadowBase(curr1=0, curr2=0, curr3=0, curr4=0):
         "amps4": curr4,
         "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     }
-    dbCount = shadowBaseCurrents.insert(data)
-    if dbCount > 100:
-        temperature.truncate()
     data["sensor"] = "sbc"
+
+    # dbCount = shadowBaseCurrents.insert(data)
+    # if dbCount > 100:
+        # temperature.truncate()
+
     handle_update_chart(data)
     
     return jsonify(message="NEW DATA INSERTED", data=data)
@@ -173,10 +175,12 @@ def insertTemperatureShadowBase(temp1=0, temp2=0, temp3=0, temp4=0):
         "temp4": temp4,
         "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     }
-    dbCount = shadowBaseTemperatures.insert(data)
-    if dbCount > 100:
-        temperature.truncate()
     data["sensor"] = "sbt"
+
+    # dbCount = shadowBaseTemperatures.insert(data)
+    # if dbCount > 100:
+        # temperature.truncate()
+    
     handle_update_chart(data)
     
     return jsonify(message="NEW DATA INSERTED", data=data)
