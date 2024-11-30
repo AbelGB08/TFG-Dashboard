@@ -9,6 +9,26 @@ victron = TinyDB('./database/victron.json')
 shadowBaseCurrents = TinyDB('./database/shadowBaseCurrents.json')
 shadowBaseTemperatures = TinyDB('./database/shadowBaseTemperatures.json')
 
+# Mapear los tipos de sensores con sus bases de datos y los campos que deben usarse
+sensor_config = {
+    "INA": {
+        "db": bateries,
+        "fields": ["volts", "amps", "pow"],
+    },
+    "BT": {
+        "db": temperature,
+        "fields": ["base", "chimenea", "exterior", "bandeja"],
+    },
+    "SBC": {
+        "db": shadowBaseCurrents,
+        "fields": ["amps1", "amps2", "amps3", "amps4"],
+    },
+    "SBT": {
+        "db": shadowBaseTemperatures,
+        "fields": ["temp1", "temp2", "temp3", "temp4"],
+    },
+}
+
 app = Flask(__name__)
 socketio = SocketIO(app)
 
@@ -25,75 +45,43 @@ def search():
     return render_template("index.html")
 
 @app.route('/getData', methods=['GET'])
-def getData(startDate='a', endDate='b', sensorName="*"):
+def getData():
     startDate = formatDate(request.args.get('startDate'))
     endDate = formatDate(request.args.get('endDate'))
     sensorName = request.args.get('sensorName')
+
     data = Query()
+
+    # Identificar tipo de sensor y extraer configuración
     if sensorName.startswith("INA"):
-        results = bateries.search((data.date >= startDate) & (data.date <= endDate) & (data.sensor == sensorName))
+        sensor_key = sensorName[:3]
+        query_condition = (data.date >= startDate) & (data.date <= endDate) & (data.sensor == sensorName)
+    else:
+        sensor_key = sensorName
+        query_condition = (data.date >= startDate) & (data.date <= endDate)
 
-        volts = []
-        amps = []
-        pow = []
-        dates = []
-        for result in results:
-            volts.append(result["volts"])
-            amps.append(result["amps"])
-            pow.append(result["pow"])
-            dates.append(result["date"])
+    config = sensor_config.get(sensor_key)
 
-        response = [volts, amps, pow, dates]
-            
-    elif sensorName == "BT":
-        results = temperature.search((data.date >= startDate) & (data.date <= endDate))
-        base = []
-        chimenea = []
-        exterior = []
-        bandeja = []
-        dates = []
-        for result in results:
-            base.append(result["base"])
-            chimenea.append(result["chimenea"])
-            exterior.append(result["exterior"])
-            bandeja.append(result["bandeja"])
-            dates.append(result["date"])
+    if not config:
+        return jsonify(message="Invalid sensor name", data=[]), 400
 
-        response = [base, chimenea, exterior, bandeja, dates]
-        
-    elif sensorName == "SBC":
-        results = shadowBaseCurrents.search((data.date >= startDate) & (data.date <= endDate))
-        amps1 = []
-        amps2 = []
-        amps3 = []
-        amps4 = []
-        dates = []
-        for result in results:
-            amps1.append(result["amps1"])
-            amps2.append(result["amps2"])
-            amps3.append(result["amps3"])
-            amps4.append(result["amps4"])
-            dates.append(result["date"])
+    # Obtener los datos solicitados
+    results = config["db"].search(query_condition)
 
-        response = [amps1, amps2, amps3, amps4, dates]
-        
-    elif sensorName == "SBT":
-        results = shadowBaseTemperatures.search((data.date >= startDate) & (data.date <= endDate))
-        temp1 = []
-        temp2 = []
-        temp3 = []
-        temp4 = []
-        dates = []
-        for result in results:
-            temp1.append(result["temp1"])
-            temp2.append(result["temp2"])
-            temp3.append(result["temp3"])
-            temp4.append(result["temp4"])
-            dates.append(result["date"])
+    # Inicializar los campos de la respuesta
+    response = {field: [] for field in config["fields"]}
+    response["dates"] = []
 
-        response = [temp1, temp2, temp3, temp4, dates]
-        
-    return jsonify(message="GET DATA RESPONSE", data=response)
+    # Añadir los datos a la respuesta
+    for result in results:
+        for field in config["fields"]:
+            response[field].append(result.get(field, None))
+        response["dates"].append(result["date"])
+
+    # Crear una lista de listas con los datos y las fechas para devolverla en la respuesta
+    response_list = [response[field] for field in config["fields"]] + [response["dates"]]
+
+    return jsonify(message="GET DATA RESPONSE", data=response_list)
     
 
 
