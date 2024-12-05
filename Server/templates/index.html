@@ -28,8 +28,8 @@
                     <option value="SBC">SB_CURRENTS</option>
                     <option value="SBT">SB_TEMPERATURES</option>
                 </select>
-                <input type="datetime-local" name="startDate" required>
-                <input type="datetime-local" name="endDate" required>
+                <input type="datetime-local" name="startDate" id="startDate" required>
+                <input type="datetime-local" name="endDate" id="endDate" required>
                 <button type="button" id="submitButton">Search</button>
             </form>
         </section>
@@ -38,7 +38,12 @@
             <canvas class="chart-canvas" id="searchChart" width="" height=""></canvas>
         </section>
     </div>
+    <section class="log-container">
+        <h1 class="log-container-title">LOGS SECTION</h1>
+        <div class="log-feed" id="log-feed"></div>
+    </section>
     <script src="{{ url_for('static', filename='scripts/search.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/temperatures.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/logs.js') }}"></script>
 </body>
 </html>

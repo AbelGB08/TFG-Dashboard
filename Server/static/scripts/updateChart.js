@@ -1,250 +1,105 @@
 var socket = io.connect('http://' + document.domain + ':' + location.port);
-var chart = null;
-var ctx = null;
-var charts = [];
-var lastDate = null;
 const maxDataPoints = 25;
+let charts = [];
+
+// Configuración base de las gráficas
+const baseChartOptions = {
+    type: 'line',
+    options: {
+        responsive: true,
+        animation: false,
+        interaction: {
+            intersect: false,
+            mode: 'x'
+        }
+    }
+};
+
+// Configuración de datasets para las diferentes gráficas
+const chartConfigurations = {
+    INA: {
+        labels: ['Volts', 'Amps', 'Pow'],
+        colors: ['rgb(255,0,0)', 'rgb(255,255,0)', 'rgb(0,0,255)']
+    },
+    temps: {
+        labels: ['Base', 'Chimenea', 'Exterior', 'Bandeja'],
+        colors: ['rgb(255,0,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(0,255,0)']
+    },
+    sbc: {
+        labels: ['Amps1', 'Amps2', 'Amps3', 'Amps4'],
+        colors: ['rgb(255,0,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(0,255,0)']
+    },
+    sbt: {
+        labels: ['Temp1', 'Temp2', 'Temp3', 'Temp4'],
+        colors: ['rgb(255,0,0)', 'rgb(255,255,0)', 'rgb(0,0,255)', 'rgb(0,255,0)']
+    }
+};
+
+function createDatasets(labels, colors) {
+    return labels.map(function(label, index) {
+        return {
+            label: label,
+            borderColor: colors[index],
+            pointRadius: 5,
+            pointHoverRadius: 10,
+            lineTension: 0.5,
+            data: []
+        };
+    });
+}
+
+function createChart(ctx, configKey) {
+    const config = chartConfigurations[configKey];
+    return new Chart(ctx, {
+        ...baseChartOptions,
+        data: {
+            labels: [],
+            datasets: createDatasets(config.labels, config.colors)
+        }
+    });
+}
 
 function initCharts() {
-    for (var i = 1; i <= 5; i++) {
-        ctx = document.getElementById('ina' + i).getContext('2d');
-        chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                        label: 'Volts',
-                        borderColor: "rgb(255,0,0)",
-                        pointRadius: 5,
-                        pointHoverRadius: 10,
-                        data: [],
-                    },
-                    {
-                        label: 'Amps',
-                        borderColor: "rgb(255,255,0)",
-                        pointRadius: 5,
-                        pointHoverRadius: 10,
-                        data: [],
-                    },
-                    {
-                        label: "Pow",
-                        borderColor: "rgb(0,0,255)",
-                        pointRadius: 5,
-                        pointHoverRadius: 10,
-                        lineTension: 0.5
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                animation: false,
-                interaction: {
-                    intersect: false,
-                    mode: 'x'
-                },
-            }
-        });
-        charts.push(chart);
+    for (let i = 1; i <= 5; i++) {
+        const ctx = document.getElementById('ina' + i).getContext('2d');
+        charts.push(createChart(ctx, 'INA'));
     }
-    ctx = document.getElementById('temps').getContext('2d');
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                    label: 'Base',
-                    borderColor: "rgb(255,0,0)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    data: [],
-                },
-                {
-                    label: 'Chimenea',
-                    borderColor: "rgb(255,255,0)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    data: [],
-                },
-                {
-                    label: "Exterior",
-                    borderColor: "rgb(0,0,255)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    lineTension: 0.5
-                },
-                {
-                    label: "Bandeja",
-                    borderColor: "rgb(0,255,0)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    lineTension: 0.5
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            animation: false,
-            interaction: {
-                intersect: false,
-                mode: 'x'
-            },
-        }
-    });
-    charts.push(chart);
 
-    ctx = document.getElementById('sbc').getContext('2d');
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                    label: 'Amps1',
-                    borderColor: "rgb(255,0,0)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    data: [],
-                },
-                {
-                    label: 'Amps2',
-                    borderColor: "rgb(255,255,0)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    data: [],
-                },
-                {
-                    label: "Amps3",
-                    borderColor: "rgb(0,0,255)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    lineTension: 0.5
-                },
-                {
-                    label: "Amps4",
-                    borderColor: "rgb(0,255,0)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    lineTension: 0.5
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            animation: false,
-            interaction: {
-                intersect: false,
-                mode: 'x'
-            },
-        }
+    ['temps', 'sbc', 'sbt'].forEach(function(id) {
+        const ctx = document.getElementById(id).getContext('2d');
+        charts.push(createChart(ctx, id));
     });
-    charts.push(chart);
-
-    ctx = document.getElementById('sbt').getContext('2d');
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                    label: 'temp1',
-                    borderColor: "rgb(255,0,0)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    data: [],
-                },
-                {
-                    label: 'temp2',
-                    borderColor: "rgb(255,255,0)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    data: [],
-                },
-                {
-                    label: "temp3",
-                    borderColor: "rgb(0,0,255)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    lineTension: 0.5
-                },
-                {
-                    label: "temp4",
-                    borderColor: "rgb(0,255,0)",
-                    pointRadius: 5,
-                    pointHoverRadius: 10,
-                    lineTension: 0.5
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            animation: false,
-            interaction: {
-                intersect: false,
-                mode: 'x'
-            },
-        }
-    });
-    charts.push(chart);
 }
 
 initCharts();
 
-socket.on('update_chart', function(data) {
-    var chart = null;
+// Actualizar las gráficas
+socket.on('update_chart', function (data) {
+    const chartIndex = {
+        'INA1': 0, 'INA2': 1, 'INA3': 2, 'INA4': 3, 'INA5': 4,
+        'temps': 5, 'sbc': 6, 'sbt': 7
+    }[data.sensor];
 
-    switch (data.sensor) {
-        case 'INA1':
-            chart = charts[0];
-            break;
-        case 'INA2':
-            chart = charts[1];
-            break;
-        case 'INA3':
-            chart = charts[2];
-            break;
-        case 'INA4':
-            chart = charts[3];
-            break;
-        case 'INA5':
-            chart = charts[4];
-            break;
-        case 'temps':
-            chart = charts[5];
-            break;
-        case 'sbc':
-            chart = charts[6];
-            break;
-        case 'sbt':
-            chart = charts[7];
-            break;
-    }
-    if (chart.id != 5 && chart.id != 6 && chart.id != 7) {
-        chart.data.labels.push(data.date.split(" ")[1]);
-        chart.data.datasets[0].data.push(data.volts);
-        chart.data.datasets[1].data.push(data.amps);
-        chart.data.datasets[2].data.push(data.pow);
-    } else if (data.sensor == 'temps') {
-        chart.data.labels.push(data.date.split(" ")[1]);
-        chart.data.datasets[0].data.push(data.base);
-        chart.data.datasets[1].data.push(data.chimenea);
-        chart.data.datasets[2].data.push(data.exterior);
-        chart.data.datasets[3].data.push(data.bandeja);
-    } else if (data.sensor == 'sbc') {
-        chart.data.labels.push(data.date.split(" ")[1]);
-        chart.data.datasets[0].data.push(data.amps1);
-        chart.data.datasets[1].data.push(data.amps2);
-        chart.data.datasets[2].data.push(data.amps3);
-        chart.data.datasets[3].data.push(data.amps4);
-    } else if (data.sensor == 'sbt') {
-        chart.data.labels.push(data.date.split(" ")[1]);
-        chart.data.datasets[0].data.push(data.temp1);
-        chart.data.datasets[1].data.push(data.temp2);
-        chart.data.datasets[2].data.push(data.temp3);
-        chart.data.datasets[3].data.push(data.temp4);
-    }
+    if (chartIndex === undefined) return; // No hacer nada si el sensor es incorrecto
 
+    const chart = charts[chartIndex];
+    chart.data.labels.push(data.date.split(" ")[1]); // Usar solo la hora en lugar de la fecha completa
+
+    // Obtener las keys de los datos a actualizar
+    const updateKeys = Object.keys(data).filter(function(key) {
+        return key !== 'sensor' && key !== 'date';
+    });
+
+    // Actualizar los datasets
+    updateKeys.forEach(function(key, idx) {
+        chart.data.datasets[idx].data.push(data[key]);
+    });
+
+    // Limitar datos a maxDataPoints
     if (chart.data.labels.length > maxDataPoints) {
-        chart.data.labels.shift();
-        chart.data.datasets.forEach(dataset => {
-            dataset.data.shift();
+        chart.data.labels.shift(); // Eliminar la fecha más antigua
+        chart.data.datasets.forEach(function(dataset) {
+            dataset.data.shift(); // Eliminar los datos más antiguos
         });
     }
 

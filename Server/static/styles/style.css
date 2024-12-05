@@ -4,18 +4,20 @@ body {
   padding-top: 4vw;
   font-family: 'Arial', sans-serif;
   background-color: #d7d7d7;
+  overflow-x: hidden;
 }
 
 .dashboard-container {
   display: flex;
   width: 100%;
-  max-height: 600px;
+  max-height: 500px;
   padding-left: 10px;
 }
 
 .search-container,
 .chart-container,
-.temp-container {
+.temp-container,
+.log-container {
   display: flex;
   flex-direction: column;
   height: inherit;
@@ -26,6 +28,7 @@ body {
   margin: 10px;
   align-items: center;
   justify-content: center;
+  padding-bottom: 50px;
 }
 
 .chart-container {
@@ -51,14 +54,17 @@ input, select, button {
   border-radius: 5px;
 }
 
-button {
-  background-color: #4caf50;
-  color: #fff;
+input:hover, select:hover, button:hover {
   cursor: pointer;
 }
 
-input[type="submit"]:hover {
-  background-color: #45a049;
+button {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+button:hover {
+  background-color: #53c557;
 }
 
 h1, h2, p {
@@ -124,4 +130,50 @@ h1, h2, p {
 
 ::-webkit-scrollbar {
   display: none;
+}
+
+.log-container {
+  display: flex;
+  flex-direction: column;
+  margin-inline: 20px;
+  height: 34vh;
+  padding-bottom: 0px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.log-feed {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.log-container-title {
+  margin-bottom: -1vh;
+  position: relative;
+  top: -2vh;
+}
+
+.log {
+  width: inherit;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: darkgrey;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.log:hover {
+  cursor: pointer;
+  background-color: #ccc;
+}
+
+.log-date {
+  align-self: center;
+}
+
+.log-message {
+  overflow-wrap: anywhere;
+  max-width: 90%;
+  text-align: justify;
 }
