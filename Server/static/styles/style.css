@@ -143,6 +143,7 @@ h1, h2, p {
 }
 
 .log-feed {
+  width: -webkit-fill-available;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -156,8 +157,8 @@ h1, h2, p {
   width: inherit;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  background-color: darkgrey;
+  justify-content: start;
+  background-color: darkorange;
   border-radius: 10px;
   padding: 10px;
   margin-bottom: 10px;
@@ -165,7 +166,7 @@ h1, h2, p {
 
 .log:hover {
   cursor: pointer;
-  background-color: #ccc;
+  background-color: rgb(255, 153, 0);
 }
 
 .log-date {
@@ -173,6 +174,7 @@ h1, h2, p {
 }
 
 .log-message {
+  padding-left: 30px;
   overflow-wrap: anywhere;
   max-width: 90%;
   text-align: justify;

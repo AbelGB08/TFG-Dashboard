@@ -18,7 +18,7 @@
     <div class="dashboard-container">
         <section class="search-container">
             <form class="search" id="dataForm">
-                <select class="sensorName" name="sensorName" required>
+                <select class="sensorName" name="sensorName" id="sensorName" required>
                     <option value="INA1">BUS_24V</option>
                     <option value="INA2">BUS_24V_AUX</option>
                     <option value="INA3">BUS_12V</option>
@@ -34,7 +34,6 @@
             </form>
         </section>
         <section class="chart-container">
-            <h1 class="chart-title" id="chartTitle"></h1>
             <canvas class="chart-canvas" id="searchChart" width="" height=""></canvas>
         </section>
     </div>

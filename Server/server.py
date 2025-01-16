@@ -2,8 +2,8 @@ from flask import Flask, request, render_template, jsonify, redirect
 from flask_socketio import SocketIO
 from tinydb import TinyDB, Query
 from datetime import datetime
-from time import sleep
 from threading import Thread
+import json
 
 bateries = TinyDB('./database/bateries.json')
 temperature = TinyDB('./database/temperature.json')
@@ -31,8 +31,28 @@ sensor_config = {
     },
 }
 
+# Obtener los limites de los sensores
+with open('./sensor_limits.json') as f:
+    sensor_limits = json.load(f)
+
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+DATE_FORMAT = "%d-%m-%Y %H:%M:%S"
+
+def sendLogIfExceedsLimits(sensor, valueType, value, limits):
+    if int(value) > limits["upper_limit"]:
+        sendLog({
+            "sensor": sensor,
+            "valueType": valueType,
+            "value": value
+        })
+    elif int(value) < limits["lower_limit"]:
+        sendLog({
+            "sensor": sensor,
+            "valueType": valueType,
+            "value": value
+        })
 
 @app.route('/')
 def index():
@@ -84,8 +104,6 @@ def getData():
     response_list = [response[field] for field in config["fields"]] + [response["dates"]]
 
     return jsonify(message="GET DATA RESPONSE", data=response_list)
-    
-
 
 @app.route('/insertData/<volts>/<amps>/<pow>/<sensor>', methods=['POST'])
 def insertData(volts=0, amps=0, pow=0, sensor="*"):
@@ -93,15 +111,19 @@ def insertData(volts=0, amps=0, pow=0, sensor="*"):
         "volts": volts,
         "amps": amps,
         "pow": pow,
-        "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
+        "date": datetime.now().strftime(DATE_FORMAT),
         "sensor": sensor
     }
 
-    handle_update_chart(data)
+    handleUpdateChart(data)
 
-    dbCount = bateries.insert(data)
-    # if dbCount > 10000:
-    #     bateries.truncate()
+    try:
+        dbCount = bateries.insert(data)
+    except Exception as e:
+        return jsonify(message="Database error", error=str(e)), 500
+
+    sendLogIfExceedsLimits(sensor, "Amps", amps, sensor_limits[sensor]["amps"])
+    sendLogIfExceedsLimits(sensor, "Volts", volts, sensor_limits[sensor]["volts"])
     
     return jsonify(message="NEW DATA INSERTED", data=data)
 
@@ -112,15 +134,19 @@ def insertTemp(temp1=0, temp2=0, temp3=0, temp4=0):
         "chimenea": temp2,
         "exterior": temp3,
         "bandeja": temp4,
-        "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+        "date": datetime.now().strftime(DATE_FORMAT),
+        "sensor": "temps"
     }
-    data["sensor"] = "temps"
 
-    handle_update_chart(data)
-    
-    dbCount = temperature.insert(data)
-    # if dbCount > 100:
-        # temperature.truncate()
+    handleUpdateChart(data)
+
+    try:
+        dbCount = temperature.insert(data)
+    except Exception as e:
+        return jsonify(message="Database error", error=str(e)), 500
+
+    for field in ["base", "chimenea", "exterior", "bandeja"]:
+        sendLogIfExceedsLimits("BT", field.capitalize() + " Temp", data[field], sensor_limits["BT"][field])
     
     return jsonify(message="NEW DATA INSERTED", data=data)
 
@@ -129,7 +155,7 @@ def insertVictron(volts=0):
     data = request.json
     print(data)
 
-    handle_update_chart(data)
+    handleUpdateChart(data)
     
     dbCount = victron.insert(data[0])
     # if dbCount > 100:
@@ -144,15 +170,19 @@ def insertCurrentShadowBase(curr1=0, curr2=0, curr3=0, curr4=0):
         "amps2": curr2,
         "amps3": curr3,
         "amps4": curr4,
-        "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+        "date": datetime.now().strftime(DATE_FORMAT),
+        "sensor": "sbc"
     }
-    data["sensor"] = "sbc"
 
-    dbCount = shadowBaseCurrents.insert(data)
-    # if dbCount > 100:
-        # temperature.truncate()
+    handleUpdateChart(data)
 
-    handle_update_chart(data)
+    try:
+        dbCount = shadowBaseCurrents.insert(data)
+    except Exception as e:
+        return jsonify(message="Database error", error=str(e)), 500
+
+    for field in ["amps1", "amps2", "amps3", "amps4"]:
+        sendLogIfExceedsLimits("SBC", field.capitalize(), data[field], sensor_limits["SBC"]["amps"])
     
     return jsonify(message="NEW DATA INSERTED", data=data)
 
@@ -163,29 +193,21 @@ def insertTemperatureShadowBase(temp1=0, temp2=0, temp3=0, temp4=0):
         "temp2": temp2,
         "temp3": temp3,
         "temp4": temp4,
-        "date": datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+        "date": datetime.now().strftime(DATE_FORMAT),
+        "sensor": "sbt"
     }
-    data["sensor"] = "sbt"
 
-    dbCount = shadowBaseTemperatures.insert(data)
-    # if dbCount > 100:
-        # temperature.truncate()
-    
-    handle_update_chart(data)
+    handleUpdateChart(data)
+
+    try:
+        dbCount = shadowBaseTemperatures.insert(data)
+    except Exception as e:
+        return jsonify(message="Database error", error=str(e)), 500
+
+    for field in ["temp1", "temp2", "temp3", "temp4"]:
+        sendLogIfExceedsLimits("SBT", field.capitalize(), data[field], sensor_limits["SBT"][field])
     
     return jsonify(message="NEW DATA INSERTED", data=data)
-
-'''
-@app.route('/updateStatusSection')
-def updateStatusSection():
-    return status.all()
-
-@app.route('/updateSensorStatus/<sensorName>/<statusName>/<message>')
-def updateSensorStatus(sensorName="", statusName="", message=""):
-    print(sensorName + "---" + statusName)
-    sensor = Query()
-    status.update({'status': statusName, 'message': message}, sensor.name == sensorName)
-'''
 
 def formatDate(date):
     date = date.split('T')
@@ -194,28 +216,19 @@ def formatDate(date):
 
     return fullDay[2] + '-' + fullDay[1] + '-' + fullDay[0] + ' ' + hour
 
-def handle_update_temp(sensor, temperatura):
+def handleUpdateTemp(sensor, temperatura):
     # Transmite la temperatura actualizada a todos los clientes conectados
     socketio.emit('update_temp', {'id': sensor, 'temp': temperatura})
 
-def handle_update_chart(data):
+def handleUpdateChart(data):
     socketio.emit('update_chart', data)
 
-def sendLog():
+def sendLog(logData):
     socketio.emit('log', {
-        'date': datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
-        'message': "Lorem ipsum dolor sit amet consectetur adipiscing elit, phasellus pellentesque semper sodales odio dui curabitur enim, ac tortor tellus non sociosqu auctor. Semper ornare et potenti cubilia dictumst ante libero lacus, vitae sollicitudin iaculis curae congue sagittis feugiat, aliquet aptent consequat mus eros pretium massa. Interdum dui nulla feugiat ligula quisque facilisis dis sociosqu aptent lacus rutrum ac morbi urna augue, quam sapien pretium curabitur sociis dignissim suscipit id tristique odio posuere penatibus montes."
+        'sensor': logData["sensor"],
+        'date': datetime.now().strftime(DATE_FORMAT),
+        'message': "Sensor " + logData["sensor"] + " has exceeded the limit: " + logData["valueType"] + " = " + str(logData["value"])
     })
-
-def sendLog2():
-    while True:
-        print("===== Sending log =====")
-        sendLog()
-        sleep(10)
-
-th = Thread(target=sendLog2)
-th.daemon = True
-th.start()
 
 socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
 #app.run(host='0.0.0.0', port=8000, debug=True)

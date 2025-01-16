@@ -1,32 +1,38 @@
-var socket = io.connect('http://' + document.domain + ':' + location.port);
+var socket = io.connect(`http://${document.domain}:${location.port}`);
 
 const logFeed = document.getElementById('log-feed');
+const sensorInput = document.getElementById('sensorName');
 const startDateInput = document.getElementById('startDate');
 const endDateInput = document.getElementById('endDate');
 const submitButton = document.getElementById('submitButton');
 
 socket.on('log', function(log) {
-    const newLog = document.createElement('div');
-    newLog.className = 'log';
-    const newLogDate = document.createElement('div');
-    newLogDate.className = 'log-date';
-    const newLogMessage = document.createElement('div');
-    newLogMessage.className = 'log-message';
+    try {
+        const newLog = document.createElement('div');
+        newLog.className = 'log';
+        const newLogDate = document.createElement('div');
+        newLogDate.className = 'log-date';
+        const newLogMessage = document.createElement('div');
+        newLogMessage.className = 'log-message';
 
-    newLogDate.textContent = log.date;
-    newLogMessage.textContent = log.message;
-    
-    newLog.appendChild(newLogDate);
-    newLog.appendChild(newLogMessage);
-    logFeed.appendChild(newLog);
+        newLogDate.textContent = log.date;
+        newLogMessage.textContent = log.message;
+        
+        newLog.appendChild(newLogDate);
+        newLog.appendChild(newLogMessage);
+        logFeed.appendChild(newLog);
 
-    logFeed.scrollTop = logFeed.scrollHeight;
+        logFeed.scrollTop = logFeed.scrollHeight;
 
-    newLog.addEventListener('click', function() {
-        startDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, -1);
-        endDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, 1);
-        submitButton.click();
-    });
+        newLog.addEventListener('click', function() {
+            sensorInput.value = log.sensor;
+            startDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, -1);
+            endDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, 1);
+            submitButton.click();
+        });
+    } catch (error) {
+        console.error('Error processing log:', error);
+    }
 });
 
 function formatToDatetimeLocalWithOffset(dateString, offsetMinutes) {
