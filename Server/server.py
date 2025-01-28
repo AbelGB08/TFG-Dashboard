@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify, redirect
+from flask import Flask, request, render_template, jsonify, redirect, send_from_directory
 from flask_socketio import SocketIO
 from tinydb import TinyDB, Query
 from datetime import datetime
@@ -10,6 +10,7 @@ temperature = TinyDB('./database/temperature.json')
 victron = TinyDB('./database/victron.json')
 shadowBaseCurrents = TinyDB('./database/shadowBaseCurrents.json')
 shadowBaseTemperatures = TinyDB('./database/shadowBaseTemperatures.json')
+logs = TinyDB('./database/logs.json')
 
 # Mapear los tipos de sensores con sus bases de datos y los campos que deben usarse
 sensor_config = {
@@ -53,6 +54,13 @@ def sendLogIfExceedsLimits(sensor, valueType, value, limits):
             "valueType": valueType,
             "value": value
         })
+
+    logs.insert({
+        "sensor": sensor,
+        "valueType": valueType,
+        "value": value,
+        "date": datetime.now().strftime(DATE_FORMAT)
+    })
 
 @app.route('/')
 def index():
@@ -208,6 +216,18 @@ def insertTemperatureShadowBase(temp1=0, temp2=0, temp3=0, temp4=0):
         sendLogIfExceedsLimits("SBT", field.capitalize(), data[field], sensor_limits["SBT"][field])
     
     return jsonify(message="NEW DATA INSERTED", data=data)
+
+@app.route('/database/logs.json')
+def getLogs():
+    logs_dir = './database'
+    logs_file = 'logs.json'
+
+    try:
+        return send_from_directory(directory=logs_dir, path=logs_file, as_attachment=False)
+    except FileNotFoundError:
+        return jsonify({"error": "logs.json not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 def formatDate(date):
     date = date.split('T')

@@ -56,3 +56,53 @@ function formatToDatetimeLocalWithOffset(dateString, offsetMinutes) {
     
     return formattedDate;
 }
+    
+function loadLogs() {
+    fetch('/database/logs.json')
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Error fetching logs: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            logFeed.innerHTML = '';
+
+            const logs = data._default;
+            for (const key in logs) {
+                if (logs.hasOwnProperty(key)) {
+                    const log = logs[key];
+                    const newLog = document.createElement('div');
+                    newLog.className = 'log';
+
+                    const newLogDate = document.createElement('div');
+                    newLogDate.className = 'log-date';
+                    newLogDate.textContent = log.date;
+
+                    const newLogMessage = document.createElement('div');
+                    newLogMessage.className = 'log-message';
+                    newLogMessage.textContent = `Sensor ${log.sensor} has exceeded the limit: ${log.valueType} = ${log.value}`;
+                    
+                    newLog.appendChild(newLogDate);
+                    newLog.appendChild(newLogMessage);
+                    logFeed.appendChild(newLog);
+
+                    newLog.addEventListener('click', function() {
+                        sensorInput.value = log.sensor;
+                        startDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, -1);
+                        endDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, 1);
+                        submitButton.click();
+                    });
+                }
+            }
+
+            logFeed.scrollTop = logFeed.scrollHeight;
+        })
+        .catch(function(error) {
+            console.error('Error loading logs:', error);
+        });
+}
+
+
+// Call loadLogs on page load
+window.onload = loadLogs;
