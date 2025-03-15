@@ -1,0 +1,94 @@
+{
+    "INA1": {
+        "amps": {
+            "upper_limit": 2,
+            "lower_limit": 5
+        },
+        "volts": {
+            "upper_limit": 30,
+            "lower_limit": 20
+        }
+    },
+    "INA2": {
+        "amps": {
+            "upper_limit": 2,
+            "lower_limit": 4
+        },
+        "volts": {
+            "upper_limit": 30,
+            "lower_limit": 20
+        }
+    },
+    "INA3": {
+        "amps": {
+            "upper_limit": 2,
+            "lower_limit": 2
+        },
+        "volts": {
+            "upper_limit": 15,
+            "lower_limit": 10
+        }
+    },
+    "INA4": {
+        "amps": {
+            "upper_limit": 2,
+            "lower_limit": 1
+        },
+        "volts": {
+            "upper_limit": 22,
+            "lower_limit": 18
+        }
+    },
+    "INA5": {
+        "amps": {
+            "upper_limit": 2,
+            "lower_limit": 0.5
+        },
+        "volts": {
+            "upper_limit": 6,
+            "lower_limit": 4
+        }
+    },
+    "BT": {
+        "base": {
+            "upper_limit": 75,
+            "lower_limit": 25
+        },
+        "chimenea": {
+            "upper_limit": 75,
+            "lower_limit": 25
+        },
+        "exterior": {
+            "upper_limit": 75,
+            "lower_limit": 25
+        },
+        "bandeja": {
+            "upper_limit": 75,
+            "lower_limit": 25
+        }
+    },
+    "SBC": {
+        "amps": {
+            "upper_limit": 13,
+            "lower_limit": 6
+        }
+    },
+    "SBT": {
+        "temp1": {
+            "upper_limit": 80,
+            "lower_limit": 20
+        },
+        "temp2": {
+            "upper_limit": 80,
+            "lower_limit": 20
+        },
+        "temp3": {
+            "upper_limit": 80,
+            "lower_limit": 20
+        },
+        "temp4": {
+            "upper_limit": 80,
+            "lower_limit": 20
+        }
+    }
+}
