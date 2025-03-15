@@ -4,6 +4,10 @@ from tinydb import TinyDB, Query
 from datetime import datetime
 from threading import Thread
 import json
+import os
+
+if not os.path.exists('./database'):
+    os.makedirs('./database')
 
 bateries = TinyDB('./database/bateries.json')
 temperature = TinyDB('./database/temperature.json')
