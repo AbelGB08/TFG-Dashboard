@@ -1,4 +1,4 @@
 pi_ina226/
 __pycache__/
-*.json
+Server/database/
 *.rest

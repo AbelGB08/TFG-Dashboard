@@ -28,9 +28,7 @@ def init_sensors():
             sensor = INA226(busnum=1, address=address, max_expected_amps=20, shunt_ohms=0.002, log_level=logging.DEBUG)
             sensor.configure()
             SENSORS.append((sensor_name, sensor))
-            #updateSensorStatus(sensor_name, "OK", "Sensor initialized correctly")
         except Exception as e:
-            #updateSensorStatus(sensor_name, "ERROR", "Could not initialize sensor")
             print(f"INIT ERROR for {sensor_name}: {e}")
 
 def writeInDB(voltage, amps, power, sensorName):
@@ -40,10 +38,6 @@ def writeInDB(voltage, amps, power, sensorName):
 def writeTempInDB(temp, sensorName):
     url = "http://localhost:5000/insertTemp/" + str(temp) + "/" + sensorName
     requests.post(url)
-
-def updateSensorStatus(sensorName, status, message):
-    url = "http://localhost:5000/updateSensorStatus/" + sensorName + "/" + status + "/" + message
-    requests.get(url)
 
 def read(sensor, sensorName):
     v = round(sensor.voltage(), 3) * 1000
