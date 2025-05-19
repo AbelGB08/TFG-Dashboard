@@ -58,7 +58,15 @@
             <canvas class="chart-canvas" id="sbt" width="" height=""></canvas>
         </section>
     </div>
-
+    <details class="log-drop-down" id="log-drop-down">
+        <summary class="log-summary">⚠️
+            <span class="log-notification-icon" id="log-notification-icon"></span>
+        </summary>
+        <section class="log-container">
+            <div class="log-feed" id="log-feed"></div>
+        </section>
+    </details>
     <script src="{{ url_for('static', filename='scripts/updateChart.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/logs.js') }}"></script>
 </body>
 </html>

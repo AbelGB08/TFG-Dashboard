@@ -5,6 +5,8 @@ const sensorInput = document.getElementById('sensorName');
 const startDateInput = document.getElementById('startDate');
 const endDateInput = document.getElementById('endDate');
 const submitButton = document.getElementById('submitButton');
+const logBubble = document.getElementById('log-drop-down');
+const logNotificationIcon = document.getElementById('log-notification-icon');
 
 socket.on('log', function(log) {
     try {
@@ -24,12 +26,24 @@ socket.on('log', function(log) {
 
         logFeed.scrollTop = logFeed.scrollHeight;
 
-        newLog.addEventListener('click', function() {
-            sensorInput.value = log.sensor;
-            startDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, -1);
-            endDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, 1);
-            submitButton.click();
+        if (!logBubble.open) {
+            logNotificationIcon.style.display = 'block';
+        }
+
+        logBubble.addEventListener('toggle', function() {
+            if (logBubble.open) {
+              logNotificationIcon.style.display = 'none';
+            }
         });
+
+        if (sensorInput) {
+            newLog.addEventListener('click', function() {
+                sensorInput.value = log.sensor;
+                startDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, -1);
+                endDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, 1);
+                submitButton.click();
+            });
+        }
     } catch (error) {
         console.error('Error processing log:', error);
     }
@@ -87,12 +101,14 @@ function loadLogs() {
                     newLog.appendChild(newLogMessage);
                     logFeed.appendChild(newLog);
 
-                    newLog.addEventListener('click', function() {
-                        sensorInput.value = log.sensor;
-                        startDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, -1);
-                        endDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, 1);
-                        submitButton.click();
-                    });
+                    if (sensorInput) {
+                        newLog.addEventListener('click', function() {
+                            sensorInput.value = log.sensor;
+                            startDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, -1);
+                            endDateInput.value = formatToDatetimeLocalWithOffset(newLogDate.textContent, 1);
+                            submitButton.click();
+                        });
+                    }
                 }
             }
 
