@@ -1,0 +1,11 @@
+import "RobotStatusPub.idsl";
+
+Component ds18b20TempSensor
+{
+    Communications
+    {
+        publishes RobotStatusPub;
+    };
+    language python;
+};
+

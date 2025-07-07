@@ -1,0 +1,11 @@
+import "RobotStatusPub.idsl";
+
+Component RobotDashboard
+{
+    Communications
+    {
+        subscribesTo RobotStatusPub;
+    };
+    language python;
+};
+

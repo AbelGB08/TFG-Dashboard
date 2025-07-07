@@ -2,3 +2,6 @@ pi_ina226/
 __pycache__/
 Server/database/
 *.rest
+build
+*.ice
+*.new

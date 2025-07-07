@@ -1,0 +1,21 @@
+[Proxies]
+# This property is used by the clients to connect to IceStorm.
+TopicManager = "IceStorm/TopicManager:default -p 9999"
+
+# Proxies for publishes interfaces
+RobotStatusPubPrefix = ""
+
+[Period]
+Compute = 100
+Emergency = 500
+
+[Ice]
+Warn.Connections = "0"
+Trace.Network = "0"
+Trace.Protocol = "0"
+MessageSizeMax = "20004800"
+
+[address]
+19V = 21
+24V = 34
+48V = 54

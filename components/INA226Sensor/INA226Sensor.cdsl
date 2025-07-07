@@ -1,0 +1,11 @@
+import "RobotStatusPub.idsl";
+
+Component INA226Sensor
+{
+    Communications
+    {
+        publishes RobotStatusPub;
+    };
+    language python;
+};
+
