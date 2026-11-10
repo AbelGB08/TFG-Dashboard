@@ -31,7 +31,6 @@ class GenericWorker(QtCore.QObject):
         super(GenericWorker, self).__init__()
 
         self.robotstatuspub_proxy = mprx["RobotStatusPub"]
-        self.robotstatuspub_proxy = mprx["RobotStatusPub"]
 
         self.configData = configData
 

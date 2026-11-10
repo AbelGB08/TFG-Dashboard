@@ -1,29 +1,56 @@
 # INA226Sensor
-Intro to component here
 
+RoboComp component that reads the INA226 power monitors and publishes them
+through the `RobotStatusPub` IceStorm topic.
 
-## Configuration parameters
-As any other component, *INA226Sensor* needs a configuration file to start. In
-```
-etc/config
-```
-you can find an example of a configuration file. We can find there the following lines:
-```
-EXAMPLE HERE
+## Dependencies
+
+- RoboComp (CMake helpers, `ConfigLoader`, IceStorm)
+- Python 3, `PySide6`, `rich`, `Ice`
+- `smbus2` on the Raspberry Pi
+
+## Configuration
+
+The component reads `etc/config`. The I2C devices are configured with dotted
+keys:
+
+```ini
+Sensors.bus = 1
+Sensors.shunt_ohms = 0.002
+Sensors.max_expected_amps = 20
+Sensors.INA1.address = 64
+Sensors.INA2.address = 65
+Sensors.INA3.address = 66
+Sensors.INA4.address = 67
+Sensors.INA5.address = 68
+Period.Compute = 1000
 ```
 
-## Starting the component
-To avoid changing the *config* file in the repository, we can copy it to the component's home directory, so changes will remain untouched by future git pulls:
+Addresses are decimal: `0x40 = 64` ... `0x44 = 68`.
 
-```
-cd <INA226Sensor's path> 
-```
-```
-cp etc/config config
+## Published data
+
+The component calls:
+
+```text
+powerState({
+  "INA1": PowerData(voltage=24.1, current=1.8),
+  ...
+})
 ```
 
-After editing the new config file we can run the component:
+- `voltage` is in volts.
+- `current` is in amperes.
+- The dashboard computes `pow = voltage * current`.
 
+## Build and run
+
+```bash
+pip install -r requirements.txt   # smbus2
+cmake . && make
+rcnode
+bin/INA226Sensor etc/config
 ```
-bin/INA226Sensor config
-```
+
+If `RobotStatusPub.idsl` is not installed, copy it to
+`$ROBOCOMP/interfaces/IDSLs/` or add its directory to `SLICE_PATH`.

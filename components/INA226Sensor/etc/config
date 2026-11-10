@@ -1,18 +1,21 @@
 # This property is used by the clients to connect to IceStorm.
 Proxies.TopicManager = "IceStorm/TopicManager:default -p 9999"
 
-
-# Proxies for publishes interfaces
+# Topic prefix used for publications. Keep empty to share RobotStatusPub.
 Proxies.RobotStatusPubPrefix = ""
 
+# INA226 devices. Addresses are decimal (0x40 = 64 ... 0x44 = 68).
+Sensors.bus = 1
+Sensors.shunt_ohms = 0.002
+Sensors.max_expected_amps = 20
+Sensors.INA1.address = 64
+Sensors.INA2.address = 65
+Sensors.INA3.address = 66
+Sensors.INA4.address = 67
+Sensors.INA5.address = 68
 
-
-
-
-
-
-
-Period.Compute = 100
+# One second is enough for the dashboard and keeps the database small.
+Period.Compute = 1000
 Period.Emergency = 500
 
 Ice.Warn.Connections = "0"
