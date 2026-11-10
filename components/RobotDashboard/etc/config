@@ -1,19 +1,15 @@
 # This property is used by the clients to connect to IceStorm.
 Proxies.TopicManager = "IceStorm/TopicManager:default -p 9999"
 
-
-
-
 # Endpoints for subscriptions interfaces
 Endpoints.RobotStatusPubTopic = "tcp -p 0"
 Endpoints.RobotStatusPubPrefix = ""
 
+# Flask/Socket.IO server used by the browser (not by the sensors).
+Web.Host = "0.0.0.0"
+Web.Port = 5000
 
-
-
-
-
-Period.Compute = 100
+Period.Compute = 1000
 Period.Emergency = 500
 
 Ice.Warn.Connections = "0"

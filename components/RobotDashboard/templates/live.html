@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFG-DASHBOARD</title>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script> -->
+    <script src="{{ url_for('static', filename='scripts/chart.min.js') }}"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <script src="{{ url_for('static', filename='scripts/jquery.min.js') }}"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script> -->
+    <script src="{{ url_for('static', filename='scripts/socketio.min.js') }}"></script>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <a href="/live">Live</a>
+        <a href="/search">Search</a>
+    </div>
+    <div class="row">
+        <section class="chart-container">
+            <h1 class="chart-title">BUS_24V</h1>
+            <canvas class="chart-canvas" id="ina1" width="" height=""></canvas>
+        </section>
+        <section class="chart-container">
+            <h1 class="chart-title">BUS_24V_AUX</h1>
+            <canvas class="chart-canvas" id="ina2" width="" height=""></canvas>
+        </section>
+    </div>
+    <div class="row">
+        <section class="chart-container">
+            <h1 class="chart-title">BUS_12V</h1>
+            <canvas class="chart-canvas" id="ina3" width="" height=""></canvas>
+        </section>
+        <section class="chart-container">
+            <h1 class="chart-title">BUS_19V</h1>
+            <canvas class="chart-canvas" id="ina4" width="" height=""></canvas>
+        </section>
+    </div>
+    <div class="row">
+        <section class="chart-container">
+            <h1 class="chart-title">BUS_5V</h1>
+            <canvas class="chart-canvas" id="ina5" width="" height=""></canvas>
+        </section>
+        <section class="chart-container">
+            <h1 class="chart-title">BODY_TEMPERATURES</h1>
+            <canvas class="chart-canvas" id="temps" width="" height=""></canvas>
+        </section>
+    </div>
+    <div class="row">
+        <section class="chart-container">
+            <h1 class="chart-title">SHADOW_BASE_CURRENTS</h1>
+            <canvas class="chart-canvas" id="sbc" width="" height=""></canvas>
+        </section>
+        <section class="chart-container">
+            <h1 class="chart-title">SHADOW_BASE_TEMPERATURES</h1>
+            <canvas class="chart-canvas" id="sbt" width="" height=""></canvas>
+        </section>
+    </div>
+    <div class="row single-chart">
+        <section class="chart-container">
+            <h1 class="chart-title">VICTRON</h1>
+            <canvas class="chart-canvas" id="victron" width="" height=""></canvas>
+        </section>
+    </div>
+    <details class="log-drop-down" id="log-drop-down">
+        <summary class="log-summary">⚠️
+            <span class="log-notification-icon" id="log-notification-icon"></span>
+        </summary>
+        <section class="log-container">
+            <div class="log-feed" id="log-feed"></div>
+        </section>
+    </details>
+    <script src="{{ url_for('static', filename='scripts/updateChart.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/logs.js') }}"></script>
+</body>
+</html>
