@@ -43,7 +43,7 @@ ENDMACRO( WRAP_PYTHON_UI )
 add_custom_target(create_symlink ALL
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_SOURCE_DIR}/bin
   COMMAND ${CMAKE_COMMAND} -E create_symlink
-    ${CMAKE_CURRENT_SOURCE_DIR}/generated/RobotDashboard.py
+    ../generated/RobotDashboard.py
     ${CMAKE_CURRENT_SOURCE_DIR}/bin/RobotDashboard
   COMMENT "Creando enlace simbólico en bin/"
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generated/RobotDashboard.py )
