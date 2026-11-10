@@ -1,10 +1,12 @@
+import os
 import time
 import Ice
 import IceStorm
 from rich.console import Console, Text
 console = Console()
 
-Ice.loadSlice("-I ./generated/ --all ./generated/RobotStatusPub.ice")
+slice_dir = os.path.dirname(os.path.abspath(__file__))
+Ice.loadSlice(f"-I {slice_dir} --all {os.path.join(slice_dir, 'RobotStatusPub.ice')}")
 import RoboCompRobotStatusPub
 
 

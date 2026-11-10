@@ -29,7 +29,8 @@ if len(ROBOCOMP)<1:
     raise RuntimeError('ROBOCOMP environment variable not set! Exiting.')
 
 
-Ice.loadSlice("-I ./generated/ --all ./generated/RobotStatusPub.ice")
+slice_dir = os.path.dirname(os.path.abspath(__file__))
+Ice.loadSlice(f"-I {slice_dir} --all {os.path.join(slice_dir, 'RobotStatusPub.ice')}")
 
 from RoboCompRobotStatusPub import *
 
