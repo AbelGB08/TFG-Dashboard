@@ -25,56 +25,77 @@ from rich.console import Console
 from genericworker import *
 import interfaces as ifaces
 
+try:
+    from src.ds18b20 import read_temperature
+except ImportError:  # allows running with src/ directly on PYTHONPATH
+    from ds18b20 import read_temperature
+
 sys.path.append('/opt/robocomp/lib')
 console = Console(highlight=False)
+
+TEMPERATURE_KEYS = ("base", "chimenea", "exterior", "bandeja")
 
 
 class SpecificWorker(GenericWorker):
     def __init__(self, proxy_map, configData, startup_check=False):
         super(SpecificWorker, self).__init__(proxy_map, configData)
         self.Period = configData["Period"]["Compute"]
-        print(configData["address"])
+
+        sensor_config = configData.get("Sensors", {})
+        self.w1_root = sensor_config.get("root", "/sys/bus/w1/devices")
+        self.sensor_ids = {
+            key: sensor_config[key]
+            for key in TEMPERATURE_KEYS
+            if key in sensor_config
+        }
+
         if startup_check:
             self.startup_check()
         else:
+            if not self.sensor_ids:
+                console.log("[ds18b20TempSensor] No Sensors.* entries found in etc/config")
             self.timer.timeout.connect(self.compute)
             self.timer.start(self.Period)
 
     def __del__(self):
         """Destructor"""
 
-
     @QtCore.Slot()
     def compute(self):
-        print('SpecificWorker.compute...')
-        self.robotstatuspub_proxy.thermalState(self.readData())
+        temperatures = self.readData()
+        if not temperatures:
+            return True
+
+        try:
+            self.robotstatuspub_proxy.thermalState(temperatures)
+        except Exception as exc:
+            console.log(f"[ds18b20TempSensor] Error publishing thermalState: {exc}")
 
         return True
-    
+
     def readData(self):
-        """Read data from sensors or other sources"""
-        # Example of creating a Temperature object
-        ret = {}
-        for i in range(2):
-            ret[f"temp{i}"] = 8.2
-        return ret
+        """Read the configured DS18B20 devices and build a ThermalMap."""
+        temperatures = {}
+
+        for key, sensor_id in self.sensor_ids.items():
+            temperature = read_temperature(str(sensor_id), self.w1_root)
+            if temperature is None:
+                console.log(f"[ds18b20TempSensor] Cannot read {key} ({sensor_id})")
+                continue
+            temperatures[key] = float(temperature)
+
+        return temperatures
 
     def startup_check(self):
-        print(f"Testing RoboCompRobotStatusPub.PowerData from ifaces.RoboCompRobotStatusPub")
-        test = ifaces.RoboCompRobotStatusPub.PowerData()
-        QTimer.singleShot(200, QApplication.instance().quit)
+        print("Testing RoboCompRobotStatusPub thermal publication")
+        QTimer.singleShot(200, QtCore.QCoreApplication.instance().quit)
 
 
+######################
+# From the RoboCompRobotStatusPub you can publish calling this methods:
+# RoboCompRobotStatusPub.void self.robotstatuspub_proxy.powerState(PowersMap powers)
+# RoboCompRobotStatusPub.void self.robotstatuspub_proxy.thermalState(ThermalMap temperatures)
 
-
-
-    ######################
-    # From the RoboCompRobotStatusPub you can publish calling this methods:
-    # RoboCompRobotStatusPub.void self.robotstatuspub_proxy.powerState(PowersMap powers)
-    # RoboCompRobotStatusPub.void self.robotstatuspub_proxy.thermalState(ThermalMap temperatures)
-
-    ######################
-    # From the RoboCompRobotStatusPub you can use this types:
-    # ifaces.RoboCompRobotStatusPub.PowerData
-
-
+######################
+# From the RoboCompRobotStatusPub you can use this types:
+# ifaces.RoboCompRobotStatusPub.PowerData
